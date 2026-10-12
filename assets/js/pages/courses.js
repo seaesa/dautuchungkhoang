@@ -1,6 +1,6 @@
 /* Trang khóa học */
 (function () {
-  const { icon, store, auth, courseCard, escapeHtml, toast, Art } = UI;
+  const { icon, store, auth, courseCard, escapeHtml, toast, Art, url } = UI;
   const D = APP_DATA;
   const PKEY = "dtcv-progress";
   const PREVIEW = 5;
@@ -70,7 +70,7 @@
         : "") +
       '<div class="unlock-note">' + icon("shield") +
       "<p>Hoàn thành khóa học và mở tài khoản, nạp từ 50 triệu đồng để <strong>nhận miễn phí toàn bộ khóa học và tin tức độc quyền</strong>.</p>" +
-      '<a class="btn btn--gold btn--sm" href="mo-tai-khoan.html#dang-ky">Mở tài khoản ngay</a></div>';
+      '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản ngay</a></div>';
   }
 
   function save() {

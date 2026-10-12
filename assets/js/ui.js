@@ -5,6 +5,23 @@
 (function () {
   "use strict";
 
+  /* ---------- URL sạch (không .html) ----------
+     Mỗi trang nằm trong thư mục riêng: /khoa-hoc/index.html → /khoa-hoc/.
+     Gốc site suy ra từ vị trí file này (assets/js/ui.js), nên link đúng
+     dù trang ở cấp thư mục nào hay site đặt trong thư mục con. */
+  const ROOT = new URL("../../", document.currentScript.src);
+  const IS_FILE = location.protocol === "file:";
+  function url(path) {
+    const u = new URL(path || "", ROOT);
+    // file:// không tự mở index.html của thư mục
+    if (IS_FILE && u.pathname.endsWith("/")) u.pathname += "index.html";
+    return IS_FILE ? u.href : u.pathname + u.search + u.hash;
+  }
+  // Ai vào /.../index.html thì đổi thanh địa chỉ về dạng gọn
+  if (!IS_FILE && /\/index\.html$/.test(location.pathname)) {
+    history.replaceState(history.state, "", location.pathname.slice(0, -10) + location.search + location.hash);
+  }
+
   /* ---------- Icons (24x24, stroke) ---------- */
   const P = {
     search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
@@ -383,11 +400,11 @@
 
   /* ---------- Layout: header / footer / drawer / modal ---------- */
   const NAV = [
-    { id: "home", href: "index.html", label: "Trang chủ" },
-    { id: "courses", href: "khoa-hoc.html", label: "Khóa học" },
-    { id: "news", href: "tin-tuc.html", label: "Tin tức" },
-    { id: "account", href: "mo-tai-khoan.html", label: "Mở tài khoản" },
-    { id: "premium", href: "premium.html", label: "Premium", premium: true },
+    { id: "home", href: url(""), label: "Trang chủ" },
+    { id: "courses", href: url("khoa-hoc/"), label: "Khóa học" },
+    { id: "news", href: url("tin-tuc/"), label: "Tin tức" },
+    { id: "account", href: url("mo-tai-khoan/"), label: "Mở tài khoản" },
+    { id: "premium", href: url("premium/"), label: "Premium", premium: true },
   ];
 
   function navLinks(page) {
@@ -399,13 +416,13 @@
 
   function headerActions() {
     const u = auth.user();
-    const search = '<a class="icon-btn hide-mobile" href="tin-tuc.html#tim-ma" aria-label="Tìm mã cổ phiếu">' + icon("search") + "</a>";
+    const search = '<a class="icon-btn hide-mobile" href="' + url("tin-tuc/") + '#tim-ma" aria-label="Tìm mã cổ phiếu">' + icon("search") + "</a>";
     const burger = '<button class="icon-btn nav-toggle" type="button" aria-label="Mở menu" aria-controls="site-drawer" aria-expanded="false" data-drawer-open>' + icon("menu") + "</button>";
     if (!u) {
       return (
         search +
         '<button class="btn btn--ghost-light hide-mobile" type="button" data-login>Đăng nhập</button>' +
-        '<a class="btn btn--green" href="mo-tai-khoan.html#dang-ky">Mở tài khoản</a>' +
+        '<a class="btn btn--green" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a>' +
         burger
       );
     }
@@ -415,9 +432,9 @@
       '<span class="avatar">' + escapeHtml(initials(u.name)) + "</span><span>" + escapeHtml(u.name) + "</span>" + icon("chevronDown") +
       "</button>" +
       '<div class="dropdown" role="menu" hidden>' +
-      '<a role="menuitem" href="dashboard.html">' + icon("home") + "Tổng quan</a>" +
-      '<a role="menuitem" href="khoa-hoc.html?tab=mine">' + icon("book") + "Khóa học của tôi</a>" +
-      '<a role="menuitem" href="premium.html">' + icon("crown") + "Nội dung Premium</a><hr>" +
+      '<a role="menuitem" href="' + url("dashboard/") + '">' + icon("home") + "Tổng quan</a>" +
+      '<a role="menuitem" href="' + url("khoa-hoc/") + '?tab=mine">' + icon("book") + "Khóa học của tôi</a>" +
+      '<a role="menuitem" href="' + url("premium/") + '">' + icon("crown") + "Nội dung Premium</a><hr>" +
       '<button role="menuitem" type="button" data-logout>' + icon("logout") + "Đăng xuất</button>" +
       "</div></div>" +
       burger
@@ -431,7 +448,7 @@
     el.className = "site-header";
     el.innerHTML =
       '<div class="container">' +
-      '<a class="brand" href="index.html" aria-label="Đầu tư cùng Vũ, về trang chủ"><img src="assets/img/logo.svg" alt="" width="42" height="42">' +
+      '<a class="brand" href="' + url("") + '" aria-label="Đầu tư cùng Vũ, về trang chủ"><img src="' + url("assets/img/logo.svg") + '" alt="" width="42" height="42">' +
       '<span><span class="brand-name">ĐẦU TƯ CÙNG VŨ</span><span class="brand-tag">Đầu tư thông minh, tài chính vững vàng</span></span></a>' +
       '<nav class="main-nav" aria-label="Điều hướng chính"><ul>' + navLinks(page) + "</ul></nav>" +
       '<div class="header-actions">' + headerActions() + "</div></div>";
@@ -450,16 +467,16 @@
     const u = auth.user();
     d.innerHTML =
       '<div class="drawer-panel" role="dialog" aria-modal="true" aria-label="Menu">' +
-      '<div class="drawer-head"><a class="brand" href="index.html"><img src="assets/img/logo.svg" alt="" width="36" height="36"><span class="brand-name">ĐẦU TƯ CÙNG VŨ</span></a>' +
+      '<div class="drawer-head"><a class="brand" href="' + url("") + '"><img src="' + url("assets/img/logo.svg") + '" alt="" width="36" height="36"><span class="brand-name">ĐẦU TƯ CÙNG VŨ</span></a>' +
       '<button class="icon-btn" type="button" aria-label="Đóng menu" data-drawer-close>' + icon("x") + "</button></div>" +
       "<nav aria-label='Menu di động'>" +
       NAV.map((n) => '<a href="' + n.href + '"' + (n.id === page ? ' aria-current="page"' : "") + ">" + n.label + icon("chevronRight", 'width="18" height="18"') + "</a>").join("") +
-      (u ? '<a href="dashboard.html"' + (page === "dashboard" ? ' aria-current="page"' : "") + ">Tổng quan của tôi" + icon("chevronRight", 'width="18" height="18"') + "</a>" : "") +
+      (u ? '<a href="' + url("dashboard/") + '"' + (page === "dashboard" ? ' aria-current="page"' : "") + ">Tổng quan của tôi" + icon("chevronRight", 'width="18" height="18"') + "</a>" : "") +
       "</nav>" +
       '<div class="drawer-actions">' +
       (u
         ? '<button class="btn btn--ghost-light" type="button" data-logout>Đăng xuất (' + escapeHtml(u.name) + ")</button>"
-        : '<button class="btn btn--ghost-light" type="button" data-login>Đăng nhập</button><a class="btn btn--green" href="mo-tai-khoan.html#dang-ky">Mở tài khoản</a>') +
+        : '<button class="btn btn--ghost-light" type="button" data-login>Đăng nhập</button><a class="btn btn--green" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a>') +
       "</div></div>";
   }
 
@@ -469,11 +486,11 @@
     el.className = "site-footer";
     el.innerHTML =
       '<div class="container"><div class="footer-top">' +
-      '<div class="footer-about"><a class="brand" href="index.html"><img src="assets/img/logo.svg" alt="" width="42" height="42"><span><span class="brand-name" style="color:#fff">ĐẦU TƯ CÙNG VŨ</span><span class="brand-tag" style="display:block">Đầu tư thông minh, tài chính vững vàng</span></span></a>' +
+      '<div class="footer-about"><a class="brand" href="' + url("") + '"><img src="' + url("assets/img/logo.svg") + '" alt="" width="42" height="42"><span><span class="brand-name" style="color:#fff">ĐẦU TƯ CÙNG VŨ</span><span class="brand-tag" style="display:block">Đầu tư thông minh, tài chính vững vàng</span></span></a>' +
       "<p>Nền tảng học đầu tư chứng khoán cho người Việt: từ kiến thức nền tảng đến phương pháp phân tích, cùng tin tức thị trường cập nhật mỗi ngày.</p>" +
       '<div class="socials"><a href="#" aria-label="YouTube">' + icon("youtube") + '</a><a href="#" aria-label="Facebook">' + icon("facebook") + '</a><a href="#" aria-label="Telegram">' + icon("telegram") + "</a></div></div>" +
-      '<div><h2>Học tập</h2><ul><li><a href="khoa-hoc.html">Lộ trình học</a></li><li><a href="khoa-hoc.html?tab=all">Tất cả khóa học</a></li><li><a href="premium.html">Thành viên Premium</a></li></ul></div>' +
-      '<div><h2>Thị trường</h2><ul><li><a href="tin-tuc.html">Tin tức chứng khoán</a></li><li><a href="tin-tuc.html#tim-ma">Tra cứu theo mã</a></li><li><a href="mo-tai-khoan.html">Mở tài khoản</a></li></ul></div>' +
+      '<div><h2>Học tập</h2><ul><li><a href="' + url("khoa-hoc/") + '">Lộ trình học</a></li><li><a href="' + url("khoa-hoc/") + '?tab=all">Tất cả khóa học</a></li><li><a href="' + url("premium/") + '">Thành viên Premium</a></li></ul></div>' +
+      '<div><h2>Thị trường</h2><ul><li><a href="' + url("tin-tuc/") + '">Tin tức chứng khoán</a></li><li><a href="' + url("tin-tuc/") + '#tim-ma">Tra cứu theo mã</a></li><li><a href="' + url("mo-tai-khoan/") + '">Mở tài khoản</a></li></ul></div>' +
       '<div><h2>Hỗ trợ</h2><ul><li><a href="#">Về chúng tôi</a></li><li><a href="#">Liên hệ</a></li><li><a href="#">Điều khoản sử dụng</a></li><li><a href="#">Chính sách bảo mật</a></li></ul></div>' +
       "</div>" +
       '<div class="footer-bottom"><span>© 2026 Đầu tư cùng Vũ</span><p>Nội dung trên website chỉ nhằm mục đích giáo dục và tham khảo, không phải khuyến nghị mua bán chứng khoán. Số liệu thị trường hiển thị là dữ liệu minh họa.</p></div>' +
@@ -509,7 +526,7 @@
       '<div class="field"><label for="login-pass">Mật khẩu</label><input class="input" id="login-pass" name="password" type="password" autocomplete="current-password" required minlength="6"><span class="field-error" aria-live="polite"></span></div>' +
       '<button class="btn btn--navy btn--lg btn--block" type="submit">Đăng nhập</button>' +
       '<button class="btn btn--outline btn--block" type="button" data-demo-login>Dùng tài khoản demo</button>' +
-      '<p class="hint">Chưa có tài khoản? <a href="mo-tai-khoan.html#dang-ky" style="color:var(--blue-500);font-weight:600">Mở tài khoản miễn phí</a></p>' +
+      '<p class="hint">Chưa có tài khoản? <a href="' + url("mo-tai-khoan/") + '#dang-ky" style="color:var(--blue-500);font-weight:600">Mở tài khoản miễn phí</a></p>' +
       "</form></div>";
     document.body.appendChild(m);
     return m;
@@ -634,7 +651,7 @@
     return (
       '<article class="course-card">' +
       '<div class="course-thumb">' + Art.thumb(c.art, c.id) + '<span class="badge badge--' + c.tone + '">' + escapeHtml(c.tag) + "</span></div>" +
-      '<div class="course-body"><h3><a href="khoa-hoc.html?cap=' + (c.level + 1) + '#lo-trinh">' + escapeHtml(c.title) + "</a></h3>" +
+      '<div class="course-body"><h3><a href="' + url("khoa-hoc/") + '?cap=' + (c.level + 1) + '#lo-trinh">' + escapeHtml(c.title) + "</a></h3>" +
       '<div class="course-meta"><span>' + icon("book") + c.lessons + " bài học</span><span>" + icon("clock") + String(c.hours).replace(".", ",") + " giờ</span>" +
       '<span class="star" aria-label="Đánh giá ' + c.rating + ' trên 5">' + icon("star") + String(c.rating).replace(".", ",") + "</span></div></div></article>"
     );
@@ -647,7 +664,7 @@
     return (
       '<article class="news-item">' +
       '<div class="news-thumb">' + Art.thumb(n.art, "n" + n.id, tk && tk.color) + "</div>" +
-      "<div><h3><a href=\"tin-tuc.html?ma=" + (n.ticker || "") + "#bai-" + n.id + '">' + (n.ticker && o.tag !== false ? '<span class="ticker-tag">' + n.ticker + "</span>" : "") + escapeHtml(n.title) + "</a></h3>" +
+      "<div><h3><a href=\"" + url("tin-tuc/") + "?ma=" + (n.ticker || "") + "#bai-" + n.id + '">' + (n.ticker && o.tag !== false ? '<span class="ticker-tag">' + n.ticker + "</span>" : "") + escapeHtml(n.title) + "</a></h3>" +
       '<p class="news-date"><time>' + n.date + "</time></p>" +
       '<p class="news-excerpt">' + escapeHtml(n.excerpt) + "</p>" +
       (cat && o.showCat ? '<span class="badge badge--soft">' + cat.label + "</span>" : "") +
@@ -658,6 +675,14 @@
   /* ---------- Global events ---------- */
   document.addEventListener("click", (e) => {
     const t = e.target;
+    const a = IS_FILE && t.closest("a[href]");
+    if (a && a.protocol === "file:" && a.pathname.endsWith("/") && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      const u = new URL(a.href);
+      u.pathname += "index.html";
+      location.href = u.href;
+      return;
+    }
     if (t.closest("[data-login]")) {
       e.preventDefault();
       openLogin();
@@ -731,5 +756,5 @@
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
 
-  window.UI = { icon, fmt, escapeHtml, store, auth, initials, rng, Charts, Art, toast, tabs, openLogin, setFieldError, courseCard, newsItem };
+  window.UI = { url, icon, fmt, escapeHtml, store, auth, initials, rng, Charts, Art, toast, tabs, openLogin, setFieldError, courseCard, newsItem };
 })();

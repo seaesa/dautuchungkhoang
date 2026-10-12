@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tin tức chứng khoán theo mã cổ phiếu | Đầu tư cùng Vũ</title>
+  <meta name="description" content="Tin tức, phân tích kỹ thuật và phân tích cơ bản gắn với từng mã cổ phiếu bạn quan tâm.">
+  <meta name="theme-color" content="#06142e">
+  <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/core.css">
+  <link rel="stylesheet" href="../assets/css/pages.css">
+  <script src="../assets/js/data.js" defer></script>
+  <script src="../assets/js/ui.js" defer></script>
+  <script src="../assets/js/pages/news.js" defer></script>
+</head>
+<body data-page="news">
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+  <header data-site-header class="site-header"></header>
+  <div data-market-strip class="market-strip"></div>
+
+  <main id="main">
+    <section class="page-banner page-banner--news">
+      <div class="banner-art" data-banner-art></div>
+      <div class="container">
+        <div>
+          <h1>Tin tức chứng khoán</h1>
+          <p>Cập nhật liên tục, phân tích chuyên sâu, gắn với đúng cổ phiếu bạn quan tâm.</p>
+        </div>
+        <div class="news-banner-search search-box" id="tim-ma">
+          <span data-icon="search"></span>
+          <label class="sr-only" for="ticker-search">Tìm theo mã cổ phiếu</label>
+          <input class="input" id="ticker-search" type="search" placeholder="Nhập mã, ví dụ MBB, FPT..." autocomplete="off"
+            role="combobox" aria-expanded="false" aria-controls="ticker-suggest" aria-autocomplete="list">
+          <div class="suggest" id="ticker-suggest" role="listbox" hidden></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container news-layout">
+        <aside class="panel ticker-side" aria-label="Tin theo mã cổ phiếu">
+          <h2>Tin theo mã cổ phiếu</h2>
+          <div class="search-box">
+            <span data-icon="filter"></span>
+            <label class="sr-only" for="ticker-filter">Lọc danh sách mã</label>
+            <input class="input" id="ticker-filter" type="search" placeholder="Lọc mã..." autocomplete="off">
+          </div>
+          <ul class="ticker-list" data-ticker-list></ul>
+        </aside>
+
+        <div>
+          <div class="news-head">
+            <h2 data-news-title>Tin tức liên quan đến MBB</h2>
+            <button class="btn btn--outline btn--sm" type="button" aria-pressed="false" data-follow>
+              <span data-icon="plus"></span><span>Theo dõi</span>
+            </button>
+          </div>
+          <div class="panel quote-card" data-quote></div>
+
+          <div class="tabs news-cats" role="tablist" aria-label="Loại tin" data-cat-tabs></div>
+          <div class="panel" style="padding:8px">
+            <div class="news-list" role="tabpanel" data-news-list aria-live="polite"></div>
+            <div class="load-more" data-load-more-wrap>
+              <button class="btn btn--outline" type="button" data-load-more>Xem thêm bài viết</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-site-footer></footer>
+</body>
+</html>

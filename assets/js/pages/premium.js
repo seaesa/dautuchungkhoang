@@ -1,6 +1,6 @@
 /* Trang Premium */
 (function () {
-  const { icon, Charts, Art, auth, toast } = UI;
+  const { icon, Charts, Art, auth, toast, url } = UI;
   const D = APP_DATA;
 
   const ANALYSES = [
@@ -38,13 +38,13 @@
       return (
         '<div class="lock-box lock-box--row">' + icon("lock") + "<p><b>Mở khóa 4 bài phân tích chuyên sâu</b> cùng thư viện báo cáo ngành.</p>" +
         (user ? "" : '<button class="btn btn--navy btn--sm" type="button" data-login>Đăng nhập</button>') +
-        '<a class="btn btn--gold btn--sm" href="mo-tai-khoan.html#dang-ky">Mở tài khoản</a></div>'
+        '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a></div>'
       );
     }
     return (
       '<div class="lock-box">' + icon("lock") + "<h3>" + title + "</h3><p>" + text + '</p><div class="row">' +
       (user ? "" : '<button class="btn btn--navy" type="button" data-login>Đăng nhập</button>') +
-      '<a class="btn btn--gold" href="mo-tai-khoan.html#dang-ky">Mở tài khoản</a></div></div>'
+      '<a class="btn btn--gold" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a></div></div>'
     );
   }
 

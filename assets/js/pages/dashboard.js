@@ -1,17 +1,17 @@
 /* Dashboard (sau khi đăng nhập) */
 (function () {
-  const { icon, fmt, Charts, Art, store, auth, escapeHtml } = UI;
+  const { icon, fmt, Charts, Art, store, auth, escapeHtml, url } = UI;
   const D = APP_DATA;
   const root = document.querySelector("[data-dashboard]");
   let indexSel = 0;
 
   const SIDE = [
-    { href: "dashboard.html", icon: "home", label: "Tổng quan", current: true },
-    { href: "khoa-hoc.html?tab=mine", icon: "book", label: "Khóa học của tôi" },
-    { href: "tin-tuc.html", icon: "newspaper", label: "Tin tức theo dõi" },
+    { href: url("dashboard/"), icon: "home", label: "Tổng quan", current: true },
+    { href: url("khoa-hoc/?tab=mine"), icon: "book", label: "Khóa học của tôi" },
+    { href: url("tin-tuc/"), icon: "newspaper", label: "Tin tức theo dõi" },
     { href: "#danh-muc", icon: "briefcase", label: "Danh mục quan tâm" },
-    { href: "premium.html", icon: "crown", label: "Nội dung Premium" },
-    { href: "mo-tai-khoan.html", icon: "user", label: "Tài khoản chứng khoán" },
+    { href: url("premium/"), icon: "crown", label: "Nội dung Premium" },
+    { href: url("mo-tai-khoan/"), icon: "user", label: "Tài khoản chứng khoán" },
   ];
 
   function gate() {
@@ -53,7 +53,7 @@
       '<div class="welcome"><div><h1>' + greeting() + ", " + escapeHtml(user.name) + "</h1><p>Chúc bạn một ngày giao dịch hiệu quả.</p></div>" +
       (user.premium
         ? '<div class="tier">' + icon("crown") + "<div><b>PREMIUM</b><small>Thành viên</small></div></div>"
-        : '<a class="tier tier--free" href="premium.html">' + icon("starLine") + "<div><b>Miễn phí</b><small>Nâng cấp Premium</small></div></a>") +
+        : '<a class="tier tier--free" href="' + url("premium/") + '">' + icon("starLine") + "<div><b>Miễn phí</b><small>Nâng cấp Premium</small></div></a>") +
       "</div>" +
       // KPIs
       '<div class="kpis">' +
@@ -76,12 +76,12 @@
         })
         .join("") +
       '</div><div class="dash-chart" data-dash-chart></div></section>' +
-      '<section class="panel panel-pad" id="danh-muc" aria-labelledby="wl-title"><div class="card-title"><h2 id="wl-title">' + (follows.length ? "Cổ phiếu bạn theo dõi" : "Cổ phiếu được quan tâm") + '</h2><a class="link-more" href="tin-tuc.html">Thêm mã</a></div>' +
+      '<section class="panel panel-pad" id="danh-muc" aria-labelledby="wl-title"><div class="card-title"><h2 id="wl-title">' + (follows.length ? "Cổ phiếu bạn theo dõi" : "Cổ phiếu được quan tâm") + '</h2><a class="link-more" href="' + url("tin-tuc/") + '">Thêm mã</a></div>' +
       '<table class="watch-table"><thead><tr><th scope="col">Mã</th><th scope="col">Giá</th><th scope="col" class="spark-cell"><span class="sr-only">Xu hướng</span></th><th scope="col">+/-</th></tr></thead><tbody>' +
       watch
         .map(
           (t) =>
-            '<tr><td><a href="tin-tuc.html?ma=' + t.code + '">' + t.code + '</a></td><td class="num">' + fmt.price(t.price) + "</td>" +
+            '<tr><td><a href="' + url("tin-tuc/") + '?ma=' + t.code + '">' + t.code + '</a></td><td class="num">' + fmt.price(t.price) + "</td>" +
             '<td class="spark-cell">' + Charts.spark(Charts.walk(24, t.code, t.price, 0.03, t.change / 1500), { w: 64, h: 22, color: t.change >= 0 ? "#16a34a" : "#e0393e", fill: false, stroke: 1.6 }) + "</td>" +
             '<td class="num ' + fmt.cls(t.change) + '">' + fmt.pct(t.change) + "</td></tr>"
         )
@@ -91,17 +91,17 @@
       "</section></div>" +
       // Continue + news
       '<div class="dash-grid dash-grid--even">' +
-      '<section class="panel panel-pad" aria-labelledby="ct-title"><div class="card-title"><h2 id="ct-title">Học tiếp</h2><a class="link-more" href="khoa-hoc.html">Lộ trình</a></div>' +
+      '<section class="panel panel-pad" aria-labelledby="ct-title"><div class="card-title"><h2 id="ct-title">Học tiếp</h2><a class="link-more" href="' + url("khoa-hoc/") + '">Lộ trình</a></div>' +
       '<div class="continue"><div class="course-thumb">' + Art.thumb(["candles", "bars", "towers", "skyline-night", "pie"][curLevel], "dash" + curLevel) + "</div>" +
       "<div><small>Cấp độ " + (curLevel + 1) + ": " + lvl.title + "</small><h3>" + escapeHtml(nextLesson.t) + "</h3>" +
       '<div class="progress"><div class="progress-track"><i style="width:' + Math.round((progress[curLevel] / lvl.lessons.length) * 100) + '%"></i></div><span class="progress-label">' + progress[curLevel] + "/" + lvl.lessons.length + " bài</span></div></div>" +
-      '<a class="btn btn--green" href="khoa-hoc.html?cap=' + (curLevel + 1) + '">Tiếp tục học</a></div></section>' +
-      '<section class="panel panel-pad" aria-labelledby="fn-title"><div class="card-title"><h2 id="fn-title">Tin nổi bật cho bạn</h2><a class="link-more" href="tin-tuc.html">Tất cả</a></div>' +
+      '<a class="btn btn--green" href="' + url("khoa-hoc/") + '?cap=' + (curLevel + 1) + '">Tiếp tục học</a></div></section>' +
+      '<section class="panel panel-pad" aria-labelledby="fn-title"><div class="card-title"><h2 id="fn-title">Tin nổi bật cho bạn</h2><a class="link-more" href="' + url("tin-tuc/") + '">Tất cả</a></div>' +
       '<ul class="mini-news">' +
       feed
         .map((n) => {
           const tk = n.ticker && D.tickers.find((t) => t.code === n.ticker);
-          return '<li><a href="tin-tuc.html?ma=' + (n.ticker || "") + "#bai-" + n.id + '"><span class="thumb">' + Art.thumb(n.art, "n" + n.id, tk && tk.color) + "</span><span>" + (n.ticker ? '<span class="ticker-tag">' + n.ticker + "</span>" : "") + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>";
+          return '<li><a href="' + url("tin-tuc/") + '?ma=' + (n.ticker || "") + "#bai-" + n.id + '"><span class="thumb">' + Art.thumb(n.art, "n" + n.id, tk && tk.color) + "</span><span>" + (n.ticker ? '<span class="ticker-tag">' + n.ticker + "</span>" : "") + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>";
         })
         .join("") +
       "</ul></section></div>" +

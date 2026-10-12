@@ -2,14 +2,23 @@
 
 Dựng lại 6 trang từ `design.jpeg` (ảnh cắt từng trang nằm ở `design-crops/`).
 
-| Trang | File |
-|---|---|
-| Trang chủ | `index.html` |
-| Khóa học (lộ trình 5 cấp độ) | `khoa-hoc.html` |
-| Tin tức theo mã cổ phiếu | `tin-tuc.html` |
-| Mở tài khoản | `mo-tai-khoan.html` |
-| Dashboard (sau đăng nhập) | `dashboard.html` |
-| Premium | `premium.html` |
+| Trang | URL | File |
+|---|---|---|
+| Trang chủ | `/` | `index.html` |
+| Khóa học (lộ trình 5 cấp độ) | `/khoa-hoc/` | `khoa-hoc/index.html` |
+| Tin tức theo mã cổ phiếu | `/tin-tuc/` | `tin-tuc/index.html` |
+| Mở tài khoản | `/mo-tai-khoan/` | `mo-tai-khoan/index.html` |
+| Dashboard (sau đăng nhập) | `/dashboard/` | `dashboard/index.html` |
+| Premium | `/premium/` | `premium/index.html` |
+
+## URL không có `.html`
+
+Không dùng cấu hình server (không `.htaccess`, nginx, `vercel.json`...):
+
+- Mỗi trang là `index.html` trong thư mục riêng, nên mọi static server đều phục vụ được `/khoa-hoc/`.
+- Các file `khoa-hoc.html`, `tin-tuc.html`... ở thư mục gốc chỉ còn là trang chuyển hướng bằng JS (`location.replace`, giữ nguyên `?query` và `#hash`), có `<meta refresh>` dự phòng khi tắt JS. Link cũ vẫn dùng được.
+- Truy cập `/.../index.html` sẽ được `history.replaceState` rút gọn thành `/.../`.
+- Link do JS sinh ra dùng `UI.url("khoa-hoc/?tab=all")`, tính từ gốc site dựa trên vị trí `assets/js/ui.js`, nên vẫn đúng khi site đặt trong thư mục con (ví dụ GitHub Pages).
 
 ## Chạy thử
 
@@ -18,7 +27,7 @@ python3 -m http.server 5173
 # mở http://127.0.0.1:5173
 ```
 
-Mở trực tiếp file `index.html` cũng chạy được; không cần build.
+Không cần build. Mở trực tiếp file `index.html` (giao thức `file://`) vẫn chạy, link sẽ tự trỏ tới `.../index.html`.
 
 ## Cấu trúc
 

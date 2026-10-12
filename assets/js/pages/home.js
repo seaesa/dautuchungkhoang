@@ -1,6 +1,6 @@
 /* Trang chủ */
 (function () {
-  const { Charts, Art, fmt, icon, rng, courseCard, escapeHtml } = UI;
+  const { Charts, Art, fmt, icon, rng, courseCard, escapeHtml, url } = UI;
   const D = APP_DATA;
 
   /* ----- Hero skyline (decorative) ----- */
@@ -64,14 +64,14 @@
     newsEl.innerHTML =
       '<article class="panel news-feature">' +
       '<div class="news-thumb">' + Art.thumb(lead.art, "n" + lead.id, tk && tk.color) + "</div>" +
-      '<div><h3><a href="tin-tuc.html' + (lead.ticker ? "?ma=" + lead.ticker : "") + '">' + escapeHtml(lead.title) + "</a></h3>" +
+      '<div><h3><a href="' + url("tin-tuc/") + (lead.ticker ? "?ma=" + lead.ticker : "") + '">' + escapeHtml(lead.title) + "</a></h3>" +
       '<p class="news-excerpt">' + escapeHtml(lead.excerpt) + '</p><p class="news-date"><time>' + lead.date + "</time></p></div></article>" +
       '<ul class="panel headline-list">' +
       rest
         .slice(0, 4)
         .map(
           (n) =>
-            '<li><a href="tin-tuc.html' + (n.ticker ? "?ma=" + n.ticker : "") + '"><span class="hl-ico">' + icon("newspaper") + "</span><span>" + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>"
+            '<li><a href="' + url("tin-tuc/") + (n.ticker ? "?ma=" + n.ticker : "") + '"><span class="hl-ico">' + icon("newspaper") + "</span><span>" + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>"
         )
         .join("") +
       "</ul>";

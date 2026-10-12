@@ -1,6 +1,6 @@
 /* Trang mở tài khoản */
 (function () {
-  const { icon, Charts, escapeHtml, setFieldError } = UI;
+  const { icon, Charts, escapeHtml, setFieldError, url } = UI;
   const D = APP_DATA;
 
   const spark = document.querySelector("[data-phone-spark]");
@@ -54,7 +54,7 @@
       "<h2>Đã gửi đăng ký</h2>" +
       "<p>Cảm ơn " + escapeHtml(name) + ". Chuyên viên " + escapeHtml(broker) + " sẽ gọi cho bạn trong 15 phút để hướng dẫn eKYC.</p>" +
       '<p style="font-size:.875rem;color:var(--muted)">Trong lúc chờ, bạn có thể học bài đầu tiên của lộ trình.</p>' +
-      '<a class="btn btn--navy" href="khoa-hoc.html">Học bài đầu tiên</a></div>';
+      '<a class="btn btn--navy" href="' + url("khoa-hoc/") + '">Học bài đầu tiên</a></div>';
     box.querySelector(".form-success").focus();
   });
 
