@@ -94,6 +94,10 @@ svg {
   display: block;
   max-width: 100%;
 }
+/* Icon không bị co khi chữ bên cạnh xuống dòng */
+[data-icon] {
+  flex-shrink: 0;
+}
 h1,
 h2,
 h3,
@@ -175,7 +179,8 @@ button {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   margin-bottom: 24px;
 }
 .section-title {
@@ -731,6 +736,17 @@ button {
   }
   .site-header .container {
     justify-content: space-between;
+    gap: 12px;
+  }
+  .site-header .brand,
+  .site-header .brand > span {
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .site-header .brand-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .nav-toggle {
     display: inline-grid;
@@ -898,7 +914,32 @@ button {
 }
 @media (max-width: 520px) {
   .grid-courses {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  /* Danh sách dọc: thẻ nằm ngang, ảnh nhỏ bên trái để xem được nhiều khóa hơn */
+  .grid-courses:not(.grid-courses--scroll) .course-card {
+    flex-direction: row;
+  }
+  .grid-courses:not(.grid-courses--scroll) .course-thumb {
+    flex: 0 0 116px;
+    aspect-ratio: auto;
+    min-height: 100px;
+  }
+  .grid-courses:not(.grid-courses--scroll) .course-thumb .badge {
+    left: 6px;
+    bottom: 6px;
+    max-width: calc(100% - 12px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .grid-courses:not(.grid-courses--scroll) .course-body {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+  .grid-courses:not(.grid-courses--scroll) .course-body h3 {
+    font-size: var(--fs-sm);
   }
 }
 
@@ -906,7 +947,7 @@ button {
 .news-item {
   position: relative;
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: 20px;
   padding: 16px;
   border-radius: var(--r-md);
@@ -955,7 +996,7 @@ button {
 }
 @media (max-width: 600px) {
   .news-item {
-    grid-template-columns: 104px 1fr;
+    grid-template-columns: 104px minmax(0, 1fr);
     gap: 14px;
     padding: 12px 0;
   }
@@ -1218,6 +1259,34 @@ button {
 .data-note svg {
   width: 14px;
   height: 14px;
+}
+
+/* ---------- Dải cuộn ngang: mờ dần ở mép còn nội dung ----------
+   Lớp .fade-l / .fade-r do UI.edgeFade() bật tắt theo vị trí cuộn. */
+.fade-r {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent);
+}
+.fade-l {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px);
+  mask-image: linear-gradient(90deg, transparent, #000 48px);
+}
+.fade-l.fade-r {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+}
+
+/* Section cuối không cộng dồn khoảng trống với lề trên của footer */
+main > .section:last-child {
+  padding-bottom: 0;
+}
+@media (max-width: 600px) {
+  .section:not(.section--tight) {
+    padding-block: 40px;
+  }
+  .site-footer {
+    margin-top: 48px;
+  }
 }
 
 /* ---------- Motion preferences ---------- */

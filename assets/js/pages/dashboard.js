@@ -122,8 +122,25 @@
     const endFix = ix.value - raw[raw.length - 1];
     const data = raw.map((v, i) => v + (endFix * i) / (raw.length - 1));
     const labels = ["9:00", "10:00", "11:00", "13:00", "14:00", "14:45"];
-    root.querySelector("[data-dash-chart]").innerHTML = Charts.area(data, { w: 640, h: 230, color: ix.change >= 0 ? "#16a34a" : "#e0393e", labels, label: "Diễn biến " + ix.code + " trong phiên" });
+    const el = root.querySelector("[data-dash-chart]");
+    // Vẽ đúng bằng bề rộng thật để chữ trục giờ không bị thu nhỏ trên mobile
+    const w = Math.round(el.clientWidth) || 640;
+    const h = Math.round(Math.min(230, Math.max(170, w * 0.36)));
+    el.innerHTML = Charts.area(data, { w, h, color: ix.change >= 0 ? "#16a34a" : "#e0393e", labels, label: "Diễn biến " + ix.code + " trong phiên" });
+    if (!chartRO) {
+      let lastW = w;
+      chartRO = new ResizeObserver(() => {
+        const cur = root.querySelector("[data-dash-chart]");
+        if (cur && Math.round(cur.clientWidth) !== lastW) {
+          lastW = Math.round(cur.clientWidth);
+          drawChart();
+        }
+      });
+    }
+    chartRO.disconnect();
+    chartRO.observe(el);
   }
+  let chartRO = null;
 
   function boot() {
     const u = auth.user();

@@ -212,15 +212,15 @@
     /* Area chart with y gridlines + x labels (dashboard) */
     area(data, opts) {
       const o = Object.assign({ w: 640, h: 220, color: "#16a34a", labels: [] }, opts);
-      const padL = 0, padB = 22, padT = 8;
+      const padL = 0, padR = 7, padB = 22, padT = 8; // padR: chừa chỗ cho chấm điểm cuối
       const ch = o.h - padB;
       const min = Math.min.apply(null, data), max = Math.max.apply(null, data);
       const span = max - min || 1;
       const y = (v) => padT + (ch - padT * 2) * (1 - (v - min) / span);
-      const step = (o.w - padL) / (data.length - 1);
+      const step = (o.w - padL - padR) / (data.length - 1);
       const pts = data.map((v, i) => [padL + i * step, y(v)]);
       const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
-      const area = line + " L" + o.w + " " + ch + " L" + padL + " " + ch + " Z";
+      const area = line + " L" + (o.w - padR) + " " + ch + " L" + padL + " " + ch + " Z";
       let grid = "";
       for (let g = 0; g <= 3; g++) {
         const gy = padT + ((ch - padT * 2) / 3) * g;
@@ -622,6 +622,8 @@
         t.tabIndex = on ? 0 : -1;
       });
       if (focus) tab.focus();
+      // Trên mobile, kéo tab vừa chọn vào vùng nhìn thấy của dải tab
+      if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
       onChange && onChange(tab.dataset.value, tab);
     }
     items.forEach((t, i) => {
@@ -739,6 +741,35 @@
 
   document.addEventListener("auth:change", renderHeader);
 
+  /* ---------- Dải cuộn ngang: mờ mép còn nội dung ---------- */
+  const SCROLLERS = ".tabs, .ticker-list, .path-nav ol, .index-tabs, .market-strip .container, .grid-courses--scroll, .app-side nav ul";
+  const bound = new WeakSet();
+  function edgeFade(el) {
+    if (bound.has(el)) return;
+    bound.add(el);
+    const update = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      el.classList.toggle("fade-l", max > 1 && el.scrollLeft > 2);
+      el.classList.toggle("fade-r", max > 1 && el.scrollLeft < max - 2);
+    };
+    el.addEventListener("scroll", update, { passive: true });
+    new ResizeObserver(update).observe(el);
+    new MutationObserver(update).observe(el, { childList: true, subtree: true });
+    update();
+  }
+  // Trang dựng lại nội dung bằng JS (đăng nhập, đổi tab...) nên theo dõi phần tử mới
+  let scanQueued = false;
+  function scanScrollers() {
+    scanQueued = false;
+    document.querySelectorAll(SCROLLERS).forEach(edgeFade);
+  }
+  new MutationObserver(() => {
+    if (!scanQueued) {
+      scanQueued = true;
+      requestAnimationFrame(scanScrollers);
+    }
+  }).observe(document.documentElement, { childList: true, subtree: true });
+
   /* ---------- Boot ---------- */
   function boot() {
     renderHeader();
@@ -748,6 +779,7 @@
     document.querySelectorAll("[data-icon]").forEach((el) => {
       el.innerHTML = icon(el.dataset.icon);
     });
+    scanScrollers();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

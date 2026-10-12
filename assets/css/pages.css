@@ -300,12 +300,12 @@
 
 @media (max-width: 1024px) {
   .hero .container {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 36px;
     padding-block: 48px 104px;
   }
   .home-news {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 760px) {
@@ -327,7 +327,7 @@
     height: 38px;
   }
   .news-feature {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .news-feature .news-thumb {
     aspect-ratio: 16 / 9;
@@ -350,12 +350,15 @@
 .courses-toolbar .tab {
   padding: 10px 22px;
 }
+.courses-toolbar .lbl-short {
+  display: none;
+}
 .courses-toolbar .search-box {
   width: min(320px, 100%);
 }
 .path-layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 300px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -633,7 +636,7 @@
 }
 @media (max-width: 960px) {
   .path-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .path-nav ol {
     display: flex;
@@ -660,6 +663,25 @@
   }
 }
 @media (max-width: 600px) {
+  /* 3 tab chia đều, không cần cuộn ngang */
+  .courses-toolbar .tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+  .courses-toolbar .tab {
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .courses-toolbar .lbl-long {
+    display: none;
+  }
+  .courses-toolbar .lbl-short {
+    display: inline;
+  }
+  .courses-toolbar .search-box {
+    width: 100%;
+  }
   .level-head {
     flex-direction: column;
   }
@@ -676,7 +698,7 @@
     grid-column: 1 / -1;
   }
   .mine-item {
-    grid-template-columns: 96px 1fr;
+    grid-template-columns: 96px minmax(0, 1fr);
   }
   .mine-item .btn {
     grid-column: 1 / -1;
@@ -738,7 +760,7 @@
 }
 .news-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -897,7 +919,7 @@
 }
 @media (max-width: 960px) {
   .news-layout {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .ticker-side {
     position: static;
@@ -1344,7 +1366,7 @@
 @media (max-width: 960px) {
   .acc-hero .container,
   .acc-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .phone-stage {
     min-height: 380px;
@@ -1359,10 +1381,10 @@
 }
 @media (max-width: 600px) {
   .steps6 {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .steps6 li {
-    grid-template-columns: 46px 1fr;
+    grid-template-columns: 46px minmax(0, 1fr);
     justify-items: start;
     align-items: center;
     padding: 8px 0;
@@ -1377,21 +1399,29 @@
   .broker-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  /* Thẻ nổi nằm trên/dưới điện thoại, không che màn hình */
+  .phone-stage {
+    min-height: 0;
+    padding: 60px 0 68px;
+  }
   .float-chip--time {
     left: 0;
+    top: 0;
   }
   .float-chip--safe {
     right: 0;
+    bottom: 0;
   }
   .phone-card-bg {
     right: 0;
+    top: 100px;
   }
 }
 
 /* =================== 5. DASHBOARD =================== */
 .app {
   display: grid;
-  grid-template-columns: 248px 1fr;
+  grid-template-columns: 248px minmax(0, 1fr);
   min-height: calc(100vh - var(--header-h));
   background: linear-gradient(90deg, var(--navy-800) 248px, transparent 248px);
 }
@@ -1641,7 +1671,7 @@
 }
 .continue {
   display: grid;
-  grid-template-columns: 132px 1fr;
+  grid-template-columns: 132px minmax(0, 1fr);
   gap: 16px;
   align-items: center;
 }
@@ -1664,7 +1694,7 @@
 }
 .mini-news li a {
   display: grid;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: 12px;
   padding: 10px 0;
   font-size: var(--fs-sm);
@@ -1725,12 +1755,12 @@
 @media (max-width: 1180px) {
   .dash-grid,
   .dash-grid--even {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 900px) {
   .app {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     background: none;
   }
   .app-side {
@@ -1758,7 +1788,7 @@
 }
 @media (max-width: 640px) {
   .kpis {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .welcome {
     flex-direction: column;
@@ -1769,6 +1799,10 @@
   }
   .watch-table .spark-cell {
     display: none;
+  }
+  .continue {
+    grid-template-columns: 88px minmax(0, 1fr);
+    gap: 12px;
   }
 }
 
@@ -1947,7 +1981,7 @@
 .analysis {
   position: relative;
   display: grid;
-  grid-template-columns: 72px 1fr;
+  grid-template-columns: 72px minmax(0, 1fr);
   gap: 14px;
   align-items: center;
   padding: 14px;
@@ -1993,7 +2027,7 @@
     grid-template-columns: 1fr 1fr;
   }
   .bulletin {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .bulletin-art {
     min-height: 180px;
@@ -2004,10 +2038,10 @@
   .perks,
   .analysis-grid,
   .bulletin-points {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .perk {
-    grid-template-columns: 52px 1fr;
+    grid-template-columns: 52px minmax(0, 1fr);
     justify-items: start;
     text-align: left;
     column-gap: 14px;
