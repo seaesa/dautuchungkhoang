@@ -48,13 +48,6 @@
           "</button></li>"
       )
       .join("");
-    // Đưa mã đang chọn vào vùng nhìn thấy của danh sách (cuộn ngang trên mobile, dọc trên desktop)
-    const on = listEl.querySelector('[aria-pressed="true"]');
-    if (on) {
-      const L = listEl.getBoundingClientRect(), B = on.getBoundingClientRect();
-      listEl.scrollLeft += B.left - L.left - (listEl.clientWidth - B.width) / 2;
-      listEl.scrollTop += B.top - L.top - (listEl.clientHeight - B.height) / 2;
-    }
   }
 
   /* ----- Quote card ----- */

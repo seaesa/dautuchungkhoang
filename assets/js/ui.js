@@ -500,7 +500,11 @@
     el.innerHTML =
       '<div class="container">' +
       APP_DATA.indices
-        .map((i) => '<span class="mk"><b>' + i.code + '</b><span class="num">' + fmt.index(i.value) + '</span><span class="num ' + fmt.cls(i.change) + '">' + fmt.change(i.change) + " (" + fmt.pct((i.change / (i.value - i.change)) * 100) + ")</span></span>")
+        .map(
+          (i) =>
+            '<span class="mk"><b>' + i.code + '</b><span class="num">' + fmt.index(i.value) + "</span>" +
+            '<span class="num ' + fmt.cls(i.change) + '"><span class="abs">' + fmt.change(i.change) + ' </span><span class="pct">' + fmt.pct((i.change / (i.value - i.change)) * 100) + "</span></span></span>"
+        )
         .join("") +
       '<span class="demo-note">Dữ liệu minh họa</span></div>';
   }
@@ -624,8 +628,6 @@
         t.tabIndex = on ? 0 : -1;
       });
       if (focus) tab.focus();
-      // Trên mobile, kéo tab vừa chọn vào vùng nhìn thấy của dải tab
-      if (list.scrollWidth > list.clientWidth) list.scrollTo({ left: tab.offsetLeft - (list.clientWidth - tab.offsetWidth) / 2, behavior: "smooth" });
       onChange && onChange(tab.dataset.value, tab);
     }
     items.forEach((t, i) => {
@@ -743,35 +745,6 @@
 
   document.addEventListener("auth:change", renderHeader);
 
-  /* ---------- Dải cuộn ngang: mờ mép còn nội dung ---------- */
-  const SCROLLERS = ".tabs, .ticker-list, .path-nav ol, .index-tabs, .market-strip .container, .grid-courses--scroll, .app-side nav ul";
-  const bound = new WeakSet();
-  function edgeFade(el) {
-    if (bound.has(el)) return;
-    bound.add(el);
-    const update = () => {
-      const max = el.scrollWidth - el.clientWidth;
-      el.classList.toggle("fade-l", max > 1 && el.scrollLeft > 2);
-      el.classList.toggle("fade-r", max > 1 && el.scrollLeft < max - 2);
-    };
-    el.addEventListener("scroll", update, { passive: true });
-    new ResizeObserver(update).observe(el);
-    new MutationObserver(update).observe(el, { childList: true, subtree: true });
-    update();
-  }
-  // Trang dựng lại nội dung bằng JS (đăng nhập, đổi tab...) nên theo dõi phần tử mới
-  let scanQueued = false;
-  function scanScrollers() {
-    scanQueued = false;
-    document.querySelectorAll(SCROLLERS).forEach(edgeFade);
-  }
-  new MutationObserver(() => {
-    if (!scanQueued) {
-      scanQueued = true;
-      requestAnimationFrame(scanScrollers);
-    }
-  }).observe(document.documentElement, { childList: true, subtree: true });
-
   /* ---------- Boot ---------- */
   function boot() {
     renderHeader();
@@ -781,7 +754,6 @@
     document.querySelectorAll("[data-icon]").forEach((el) => {
       el.innerHTML = icon(el.dataset.icon);
     });
-    scanScrollers();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

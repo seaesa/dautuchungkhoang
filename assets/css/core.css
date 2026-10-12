@@ -378,13 +378,9 @@ button {
 /* ---------- Tabs (pill style) ---------- */
 .tabs {
   display: flex;
+  flex-wrap: wrap; /* thiếu chỗ thì xuống dòng, không giấu tab nào ngoài khung */
   gap: 6px;
-  overflow-x: auto;
-  scrollbar-width: none;
   padding-bottom: 2px;
-}
-.tabs::-webkit-scrollbar {
-  display: none;
 }
 .tab {
   flex-shrink: 0;
@@ -396,6 +392,9 @@ button {
   background: var(--surface);
   border: 1px solid var(--line);
   transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+}
+.tabs.tabs--line {
+  row-gap: 0;
 }
 .tabs.is-instant .tab {
   transition: none;
@@ -755,6 +754,18 @@ button {
     display: inline-grid;
   }
 }
+@media (max-width: 540px) {
+  /* Nút gọn lại để tên thương hiệu không bị cắt */
+  .header-actions .btn--green {
+    min-height: 36px;
+    padding-inline: 12px;
+    font-size: var(--fs-sm);
+  }
+  .site-header .brand img {
+    width: 38px;
+    height: 38px;
+  }
+}
 @media (max-width: 420px) {
   .header-actions .btn--green {
     display: none;
@@ -770,14 +781,11 @@ button {
 }
 .market-strip .container {
   display: flex;
+  flex-wrap: wrap; /* thiếu chỗ thì xuống dòng, không giấu chỉ số nào */
   align-items: center;
-  gap: 28px;
+  gap: 4px 28px;
   min-height: 38px;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.market-strip .container::-webkit-scrollbar {
-  display: none;
+  padding-block: 6px;
 }
 .market-strip .mk {
   display: flex;
@@ -793,6 +801,35 @@ button {
   margin-left: auto;
   flex-shrink: 0;
   color: rgba(255, 255, 255, 0.45);
+}
+.market-strip .pct::before {
+  content: "(";
+}
+.market-strip .pct::after {
+  content: ")";
+}
+/* Mobile: 4 chỉ số xếp lưới, hiện đủ trong khung, không cuộn ngang */
+@media (max-width: 760px) {
+  .market-strip .container {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding-block: 7px;
+  }
+  .market-strip .mk {
+    display: grid;
+    gap: 1px;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .market-strip .abs,
+  .market-strip .demo-note {
+    display: none;
+  }
+  .market-strip .pct::before,
+  .market-strip .pct::after {
+    content: none;
+  }
 }
 
 /* ---------- Page banner (inner pages) ---------- */
@@ -921,15 +958,15 @@ button {
     gap: 12px;
   }
   /* Danh sách dọc: thẻ nằm ngang, ảnh nhỏ bên trái để xem được nhiều khóa hơn */
-  .grid-courses:not(.grid-courses--scroll) .course-card {
+  .grid-courses .course-card {
     flex-direction: row;
   }
-  .grid-courses:not(.grid-courses--scroll) .course-thumb {
+  .grid-courses .course-thumb {
     flex: 0 0 116px;
     aspect-ratio: auto;
     min-height: 100px;
   }
-  .grid-courses:not(.grid-courses--scroll) .course-thumb .badge {
+  .grid-courses .course-thumb .badge {
     left: 6px;
     bottom: 6px;
     max-width: calc(100% - 12px);
@@ -937,11 +974,11 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .grid-courses:not(.grid-courses--scroll) .course-body {
+  .grid-courses .course-body {
     padding: 12px 14px;
     gap: 8px;
   }
-  .grid-courses:not(.grid-courses--scroll) .course-body h3 {
+  .grid-courses .course-body h3 {
     font-size: var(--fs-sm);
   }
 }
@@ -1269,21 +1306,6 @@ button {
 .data-note svg {
   width: 14px;
   height: 14px;
-}
-
-/* ---------- Dải cuộn ngang: mờ dần ở mép còn nội dung ----------
-   Lớp .fade-l / .fade-r do UI.edgeFade() bật tắt theo vị trí cuộn. */
-.fade-r {
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 48px), transparent);
-}
-.fade-l {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px);
-  mask-image: linear-gradient(90deg, transparent, #000 48px);
-}
-.fade-l.fade-r {
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 48px, #000 calc(100% - 48px), transparent);
 }
 
 /* Section cuối không cộng dồn khoảng trống với lề trên của footer */

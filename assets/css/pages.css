@@ -638,21 +638,16 @@
   .path-layout {
     grid-template-columns: minmax(0, 1fr);
   }
+  /* Lưới thay cho dải trượt ngang: cả 5 cấp độ luôn nằm trong khung hình */
   .path-nav ol {
-    display: flex;
-    overflow-x: auto;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: 8px;
-    padding-bottom: 6px;
-    scroll-snap-type: x mandatory;
   }
   .path-nav ol::before {
     display: none;
   }
-  .path-nav li {
-    scroll-snap-align: start;
-  }
   .path-step {
-    width: max-content;
+    width: 100%;
     border: 1px solid var(--line);
   }
   .path-step .mini-bar {
@@ -765,8 +760,6 @@
   align-items: start;
 }
 .ticker-side {
-  position: sticky;
-  top: calc(var(--header-h) + 16px);
   padding: 18px 12px;
 }
 .ticker-side h2 {
@@ -782,9 +775,9 @@
   min-height: 40px;
   font-size: var(--fs-sm);
 }
+/* Hiện đủ mọi mã, không giấu trong khung cuộn */
 .ticker-list {
-  max-height: 60vh;
-  overflow-y: auto;
+  display: grid;
 }
 .ticker-list button {
   display: grid;
@@ -929,14 +922,16 @@
   .ticker-side .search-box {
     display: none;
   }
+  /* Chip mã xếp lưới đều, không trượt ra ngoài khung hình */
   .ticker-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
     gap: 6px;
     max-height: none;
-    overflow-x: auto;
+    overflow: visible;
   }
-  .ticker-list li {
-    flex-shrink: 0;
+  .ticker-list li:first-child {
+    grid-column: span 2;
   }
   .ticker-list button {
     grid-template-columns: auto auto;
@@ -1763,21 +1758,29 @@
     grid-template-columns: minmax(0, 1fr);
     background: none;
   }
+  /* Menu thành lưới ô: đủ 6 mục trong khung hình, không trượt ngang */
   .app-side {
-    position: sticky;
-    top: var(--header-h);
-    z-index: 5;
+    position: static;
     height: auto;
-    padding: 8px var(--gutter);
-    overflow-x: auto;
+    padding: 10px var(--gutter);
+    overflow: visible;
   }
   .app-side ul {
-    display: flex;
-    gap: 4px;
+    grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+    gap: 6px;
   }
   .app-side a {
-    white-space: nowrap;
-    padding: 9px 12px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    height: 100%;
+    padding: 9px 6px;
+    font-size: var(--fs-xs);
+    line-height: 1.3;
+    text-align: center;
+  }
+  .app-side a[aria-current="page"] {
+    box-shadow: inset 0 -2px 0 var(--gold-400);
   }
   .app-side .side-premium {
     display: none;
@@ -2122,23 +2125,3 @@
   height: 12px;
 }
 
-/* Featured courses: horizontal swipe on phones */
-@media (max-width: 520px) {
-  .grid-courses--scroll {
-    grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 78%;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    margin-inline: calc(var(--gutter) * -1);
-    padding: 2px var(--gutter) 8px;
-    scroll-padding-inline: var(--gutter);
-    scrollbar-width: none;
-  }
-  .grid-courses--scroll::-webkit-scrollbar {
-    display: none;
-  }
-  .grid-courses--scroll > * {
-    scroll-snap-align: start;
-  }
-}
