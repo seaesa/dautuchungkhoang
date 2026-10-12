@@ -1869,57 +1869,63 @@
   font-size: var(--fs-sm);
   color: var(--muted);
 }
-.lockable {
-  position: relative;
-}
-.lockable.is-locked .lock-content {
-  filter: blur(5px);
-  user-select: none;
-  pointer-events: none;
-}
-.lock-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+/* Khóa nội dung: cho xem trước phần đầu, phần sau mờ dần.
+   Hộp mời mở khóa nằm trong luồng trang, không đè lên nội dung
+   và không dùng blur (blur làm nhòe tràn ra ngoài viền thẻ). */
+.lock-gate {
   display: none;
-  place-items: center;
-  padding: 16px;
 }
-.lockable.is-locked .lock-overlay {
-  display: grid;
+.lockable.is-locked .lock-gate {
+  display: block;
+}
+.lockable.is-locked [data-lock-hide] {
+  display: none;
+}
+.lockable.is-locked [data-lock-fade] {
+  -webkit-mask-image: linear-gradient(180deg, #000 35%, transparent 95%);
+  mask-image: linear-gradient(180deg, #000 35%, transparent 95%);
+  user-select: none;
 }
 .lock-box {
   display: grid;
-  justify-items: center;
-  gap: 10px;
-  max-width: 400px;
-  padding: 24px;
-  border-radius: var(--r-lg);
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: var(--shadow-lg);
-  text-align: center;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 4px 14px;
+  padding: 18px;
+  border: 1px solid rgba(246, 198, 74, 0.5);
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--gold-50), var(--surface) 75%);
 }
 .lock-box > svg {
+  grid-row: span 2;
   width: 40px;
   height: 40px;
-  padding: 8px;
+  padding: 9px;
   border-radius: 12px;
-  background: var(--gold-50);
+  background: rgba(246, 198, 74, 0.22);
   color: var(--gold-500);
 }
-.lock-box h3 {
-  font-size: var(--fs-lg);
+.lock-gate .lock-box h3 {
+  font-size: var(--fs-md);
+  font-weight: 800;
   color: var(--navy-800);
 }
 .lock-box p {
   font-size: var(--fs-sm);
-  color: var(--muted);
+  color: var(--text-2);
 }
 .lock-box .row {
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 8px;
+  margin-top: 12px;
+}
+.lock-box:focus-visible {
+  outline: 3px solid var(--gold-400);
+  outline-offset: 3px;
+}
+.bulletin .lock-gate {
   margin-top: 4px;
 }
 .bulletin {
@@ -1960,7 +1966,7 @@
   margin-top: 2px;
   color: var(--green-500);
 }
-.bulletin-body .btn {
+.bulletin-body > .btn {
   margin-top: 22px;
 }
 .bulletin-art {
@@ -2066,31 +2072,54 @@
     padding: 20px;
   }
 }
+.lockable[data-compact] .lock-gate {
+  margin-top: 16px;
+}
+/* Biến thể một hàng: icon | lời mời | nút */
 .lock-box--row {
-  display: flex;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
-  max-width: 760px;
-  padding: 14px 18px;
-  text-align: left;
 }
 .lock-box--row > svg {
-  flex-shrink: 0;
-}
-.lock-box--row p {
-  flex: 1;
-  color: var(--text-2);
+  grid-row: auto;
 }
 .lock-box--row b {
   color: var(--navy-800);
 }
+.lock-box--row .row {
+  grid-column: auto;
+  margin-top: 0;
+}
 @media (max-width: 760px) {
   .lock-box--row {
-    flex-wrap: wrap;
+    grid-template-columns: auto minmax(0, 1fr);
   }
-  .lock-box--row p {
-    flex-basis: calc(100% - 60px);
+  .lock-box--row .row {
+    grid-column: 1 / -1;
+    margin-top: 12px;
   }
+}
+@media (max-width: 560px) {
+  .lock-box .row .btn {
+    flex: 1 1 130px;
+  }
+}
+/* Nhãn khóa nhỏ trên từng bài phân tích */
+.lock-pill {
+  display: none;
+}
+.lockable.is-locked .lock-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 8px;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--gold-500);
+}
+.lock-pill svg {
+  width: 12px;
+  height: 12px;
 }
 
 /* Featured courses: horizontal swipe on phones */

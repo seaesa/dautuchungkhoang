@@ -48,6 +48,13 @@
           "</button></li>"
       )
       .join("");
+    // Đưa mã đang chọn vào vùng nhìn thấy của danh sách (cuộn ngang trên mobile, dọc trên desktop)
+    const on = listEl.querySelector('[aria-pressed="true"]');
+    if (on) {
+      const L = listEl.getBoundingClientRect(), B = on.getBoundingClientRect();
+      listEl.scrollLeft += B.left - L.left - (listEl.clientWidth - B.width) / 2;
+      listEl.scrollTop += B.top - L.top - (listEl.clientHeight - B.height) / 2;
+    }
   }
 
   /* ----- Quote card ----- */
@@ -187,7 +194,7 @@
     else if (e.key === "Enter") {
       e.preventDefault();
       if (active >= 0) pick(matches[active].code);
-      else if (input.value.trim()) toast("Không có mã " + input.value.trim().toUpperCase() + " trong danh sách theo dõi.");
+      else if (input.value.trim()) toast("Không có mã " + input.value.trim().toUpperCase() + " trong danh sách theo dõi.", "info");
     } else if (e.key === "Escape") closeSuggest();
   });
   box.addEventListener("mousedown", (e) => e.preventDefault()); // giữ focus khi click gợi ý

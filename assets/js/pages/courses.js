@@ -187,5 +187,11 @@
   renderNav();
   renderLevel();
   const tab = params.get("tab");
-  if (tab === "all" || tab === "mine") tabCtl.select(tab);
+  if (tab === "all" || tab === "mine") {
+    // Chọn tab từ URL ngay khi tải: tắt hiệu ứng chuyển màu để không bị nháy
+    const list = document.querySelector("[data-course-tabs]");
+    list.classList.add("is-instant");
+    tabCtl.select(tab);
+    requestAnimationFrame(() => requestAnimationFrame(() => list.classList.remove("is-instant")));
+  }
 })();

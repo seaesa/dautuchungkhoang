@@ -595,7 +595,9 @@
   }
 
   /* ---------- Toast ---------- */
-  function toast(msg) {
+  // kind: "lock" (nội dung bị khóa), "info" (thông tin/không tìm thấy); mặc định là thành công
+  const TOAST_ICON = { lock: "lock", info: "info" };
+  function toast(msg, kind) {
     let region = document.querySelector(".toast-region");
     if (!region) {
       region = document.createElement("div");
@@ -605,8 +607,8 @@
       document.body.appendChild(region);
     }
     const t = document.createElement("div");
-    t.className = "toast";
-    t.innerHTML = icon("checkCircle") + "<span>" + escapeHtml(msg) + "</span>";
+    t.className = "toast" + (TOAST_ICON[kind] ? " toast--" + kind : "");
+    t.innerHTML = icon(TOAST_ICON[kind] || "checkCircle") + "<span>" + escapeHtml(msg) + "</span>";
     region.appendChild(t);
     setTimeout(() => t.remove(), 3200);
   }

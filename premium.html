@@ -56,19 +56,19 @@
             <div class="bulletin-body">
               <h3>Bản tin thị trường ngày <span data-today></span></h3>
               <time>Phát hành lúc 7:30, trước phiên giao dịch</time>
-              <ul class="bulletin-points">
+              <ul class="bulletin-points" data-lock-fade>
                 <li><span data-icon="checkCircle"></span>Tổng quan thị trường và kịch bản phiên hôm nay</li>
                 <li><span data-icon="checkCircle"></span>Doanh nghiệp cần theo dõi</li>
                 <li><span data-icon="checkCircle"></span>Nhóm ngành đáng chú ý</li>
                 <li><span data-icon="checkCircle"></span>Lịch sự kiện sắp tới</li>
-                <li><span data-icon="checkCircle"></span>Dòng tiền và giao dịch khối ngoại</li>
-                <li><span data-icon="checkCircle"></span>Vùng hỗ trợ, kháng cự của VN-Index</li>
+                <li data-lock-hide><span data-icon="checkCircle"></span>Dòng tiền và giao dịch khối ngoại</li>
+                <li data-lock-hide><span data-icon="checkCircle"></span>Vùng hỗ trợ, kháng cự của VN-Index</li>
               </ul>
-              <a class="btn btn--navy" href="#" data-premium-link>Đọc bản tin <span data-icon="arrowRight"></span></a>
+              <a class="btn btn--navy" href="#" data-premium-link data-lock-hide>Đọc bản tin <span data-icon="arrowRight"></span></a>
+              <div class="lock-gate" data-lock-gate></div>
             </div>
             <div class="bulletin-art" data-bulletin-art></div>
           </article>
-          <div class="lock-overlay" data-lock-overlay></div>
         </div>
       </div>
     </section>
@@ -80,7 +80,7 @@
         </div>
         <div class="lockable" data-lockable data-compact>
           <div class="analysis-grid lock-content" data-analysis></div>
-          <div class="lock-overlay" data-lock-overlay></div>
+          <div class="lock-gate" data-lock-gate></div>
         </div>
       </div>
     </section>

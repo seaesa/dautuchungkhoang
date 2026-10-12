@@ -25,38 +25,39 @@
     const tk = D.tickers.find((t) => t.code === a.code);
     return (
       '<article class="panel analysis"><div class="thumb">' + Art.thumb(a.art, "pa" + a.code, tk && tk.color) + "</div>" +
-      '<div><span class="sector">' + a.sector + '</span><h3><a href="#" data-premium-link>' + a.title + "</a></h3><time>" + a.date + "</time></div></article>"
+      '<div><span class="sector">' + a.sector + '</span><span class="lock-pill">' + icon("lock") + 'Premium</span><h3><a href="#" data-premium-link>' + a.title + "</a></h3><time>" + a.date + "</time></div></article>"
     );
   }).join("");
 
-  function overlay(user, compact) {
-    const title = user ? "Nâng cấp để đọc nội dung này" : "Nội dung dành cho thành viên Premium";
+  function gate(user, compact) {
+    const login = user ? "" : '<button class="btn btn--navy btn--sm" type="button" data-login>Đăng nhập</button>';
+    const signup = '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a>';
+    if (compact) {
+      return (
+        '<div class="lock-box lock-box--row" tabindex="-1">' + icon("lock") +
+        "<p><b>4 bài phân tích đang khóa.</b> " + (user ? "Nâng cấp Premium để đọc toàn bộ và mở thư viện báo cáo ngành." : "Đăng nhập hoặc mở tài khoản để đọc toàn bộ và mở thư viện báo cáo ngành.") + "</p>" +
+        '<div class="row">' + login + signup + "</div></div>"
+      );
+    }
+    const title = user ? "Nâng cấp Premium để đọc trọn bản tin" : "Đọc trọn bản tin với tài khoản Premium";
     const text = user
       ? "Mở tài khoản chứng khoán liên kết và nạp từ 50 triệu đồng để kích hoạt Premium miễn phí."
       : "Đăng nhập nếu bạn đã là thành viên, hoặc mở tài khoản để nhận quyền truy cập miễn phí.";
-    if (compact) {
-      return (
-        '<div class="lock-box lock-box--row">' + icon("lock") + "<p><b>Mở khóa 4 bài phân tích chuyên sâu</b> cùng thư viện báo cáo ngành.</p>" +
-        (user ? "" : '<button class="btn btn--navy btn--sm" type="button" data-login>Đăng nhập</button>') +
-        '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a></div>'
-      );
-    }
-    return (
-      '<div class="lock-box">' + icon("lock") + "<h3>" + title + "</h3><p>" + text + '</p><div class="row">' +
-      (user ? "" : '<button class="btn btn--navy" type="button" data-login>Đăng nhập</button>') +
-      '<a class="btn btn--gold" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a></div></div>'
-    );
+    return '<div class="lock-box" tabindex="-1">' + icon("lock") + "<h3>" + title + "</h3><p>" + text + '</p><div class="row">' + login + signup + "</div></div>";
+  }
+
+  function isUnlocked() {
+    const u = auth.user();
+    return !!(u && u.premium);
   }
 
   function applyLock() {
     const u = auth.user();
-    const unlocked = !!(u && u.premium);
+    const unlocked = isUnlocked();
     document.querySelectorAll("[data-lockable]").forEach((el) => {
       el.classList.toggle("is-locked", !unlocked);
-      const content = el.querySelector(".lock-content");
-      content.toggleAttribute("inert", !unlocked);
-      content.setAttribute("aria-hidden", unlocked ? "false" : "true");
-      el.querySelector("[data-lock-overlay]").innerHTML = unlocked ? "" : overlay(u, el.hasAttribute("data-compact"));
+      const slot = el.querySelector("[data-lock-gate]");
+      if (slot) slot.innerHTML = unlocked ? "" : gate(u, el.hasAttribute("data-compact"));
     });
     document.querySelector("[data-lock-status]").innerHTML = unlocked
       ? icon("checkCircle") + "Bạn đang là thành viên Premium"
@@ -64,10 +65,20 @@
   }
 
   document.addEventListener("click", (e) => {
-    if (e.target.closest("[data-premium-link]")) {
-      e.preventDefault();
-      toast("Bài viết đầy đủ sẽ hiển thị khi kết nối với hệ thống nội dung.");
+    const link = e.target.closest("[data-premium-link]");
+    if (!link) return;
+    e.preventDefault();
+    if (isUnlocked()) {
+      toast("Bài viết đầy đủ sẽ hiển thị khi kết nối với hệ thống nội dung.", "info");
+      return;
     }
+    // Đang khóa: đưa người dùng tới hộp mời mở khóa gần nhất
+    const box = link.closest("[data-lockable]")?.querySelector(".lock-box");
+    if (box) {
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+      box.focus({ preventScroll: true });
+    }
+    toast("Bài này dành cho thành viên Premium.", "lock");
   });
 
   document.addEventListener("auth:change", applyLock);
