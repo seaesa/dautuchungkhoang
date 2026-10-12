@@ -5,8 +5,8 @@
 (function () {
   "use strict";
 
-  /* ---------- URL sạch (không .html) ----------
-     Mỗi trang nằm trong thư mục riêng: /khoa-hoc/index.html → /khoa-hoc/.
+  /* ---------- URL ----------
+     Mỗi trang mở được ở cả /khoa-hoc/ (khoa-hoc/index.html) và /khoa-hoc.html.
      Gốc site suy ra từ vị trí file này (assets/js/ui.js), nên link đúng
      dù trang ở cấp thư mục nào hay site đặt trong thư mục con. */
   const ROOT = new URL("../../", document.currentScript.src);
@@ -16,10 +16,6 @@
     // file:// không tự mở index.html của thư mục
     if (IS_FILE && u.pathname.endsWith("/")) u.pathname += "index.html";
     return IS_FILE ? u.href : u.pathname + u.search + u.hash;
-  }
-  // Ai vào /.../index.html thì đổi thanh địa chỉ về dạng gọn
-  if (!IS_FILE && /\/index\.html$/.test(location.pathname)) {
-    history.replaceState(history.state, "", location.pathname.slice(0, -10) + location.search + location.hash);
   }
 
   /* ---------- Icons (24x24, stroke) ---------- */

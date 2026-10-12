@@ -1,17 +1,161 @@
 <!doctype html>
+<!-- Tự sinh từ mo-tai-khoan/index.html bởi scripts/sync-pages.py. Đừng sửa trực tiếp file này. -->
 <html lang="vi">
 <head>
   <meta charset="utf-8">
-  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mở tài khoản chứng khoán online | Đầu tư cùng Vũ</title>
   <link rel="canonical" href="mo-tai-khoan/">
-  <script>
-    // Chuyển URL cũ mo-tai-khoan.html sang mo-tai-khoan/ (giữ nguyên ?query và #hash)
-    location.replace("mo-tai-khoan/" + (location.protocol === "file:" ? "index.html" : "") + location.search + location.hash);
-  </script>
-  <noscript><meta http-equiv="refresh" content="0; url=mo-tai-khoan/"></noscript>
+  <meta name="description" content="Mở tài khoản chứng khoán online trong 5 phút với eKYC. Miễn phí giao dịch 15 ngày đầu và nhận trọn bộ khóa học.">
+  <meta name="theme-color" content="#06142e">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/pages/account.js" defer></script>
 </head>
-<body>
-  <p>Trang đã chuyển tới <a href="mo-tai-khoan/">mo-tai-khoan/</a>.</p>
+<body data-page="account">
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+  <header data-site-header class="site-header"></header>
+
+  <main id="main">
+    <section class="acc-hero" aria-labelledby="acc-title">
+      <div class="container">
+        <div>
+          <h1 id="acc-title">Mở tài khoản chứng khoán</h1>
+          <p class="sub">Nhanh chóng, an toàn, uy tín</p>
+          <ul class="checklist">
+            <li><span data-icon="check"></span>Thủ tục đơn giản, online 100%</li>
+            <li><span data-icon="check"></span>Miễn phí giao dịch trong 15 ngày đầu</li>
+            <li><span data-icon="check"></span>Hỗ trợ tư vấn 24/7</li>
+            <li><span data-icon="check"></span>Nhận miễn phí trọn bộ khóa học khi nạp từ 50 triệu đồng</li>
+          </ul>
+          <a class="btn btn--green btn--lg" href="#dang-ky">Bắt đầu mở tài khoản <span data-icon="arrowRight"></span></a>
+        </div>
+
+        <div class="phone-stage" aria-hidden="true">
+          <div class="phone-card-bg"></div>
+          <div class="phone">
+            <div class="phone-screen">
+              <div class="ps-head"><span>Tài khoản</span><span style="color:var(--green-500)">● Online</span></div>
+              <div class="ps-bal"><small>Tổng tài sản</small><b>152.400.000 đ</b><small style="color:#4ade80">+2,4% hôm nay</small></div>
+              <div class="ps-spark" data-phone-spark></div>
+              <div class="ps-row"><span>MBB</span><span>24.800</span><span class="up">+1,3%</span></div>
+              <div class="ps-row"><span>FPT</span><span>142.000</span><span class="up">+0,7%</span></div>
+              <div class="ps-row"><span>HPG</span><span>27.300</span><span class="down">-0,4%</span></div>
+              <div class="ps-row"><span>VNM</span><span>72.500</span><span class="up">+0,5%</span></div>
+              <div class="ps-btn">Đặt lệnh</div>
+            </div>
+          </div>
+          <div class="float-chip float-chip--time"><span data-icon="clock"></span><span>Chỉ 5 phút<small>với eKYC</small></span></div>
+          <div class="float-chip float-chip--safe"><span data-icon="shield"></span><span>Bảo mật<small>chuẩn ngân hàng</small></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="steps-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="steps-title">6 bước mở tài khoản</h2>
+            <p class="section-sub">Chuẩn bị sẵn căn cước công dân và điện thoại có camera.</p>
+          </div>
+        </div>
+        <ol class="steps6 panel">
+          <li><span>Chọn công ty chứng khoán<br><small>Xem gợi ý bên dưới</small></span></li>
+          <li><span>Điền thông tin cá nhân<br><small>Họ tên, số điện thoại</small></span></li>
+          <li><span>Xác thực eKYC<br><small>Chụp CCCD, quay khuôn mặt</small></span></li>
+          <li><span>Ký hợp đồng điện tử<br><small>Bằng mã OTP</small></span></li>
+          <li><span>Nạp tiền vào tài khoản<br><small>Chuyển khoản ngân hàng</small></span></li>
+          <li><span>Bắt đầu giao dịch<br><small>Đặt lệnh đầu tiên</small></span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" id="dang-ky" aria-labelledby="broker-title">
+      <div class="container acc-grid">
+        <div>
+          <div class="section-head" style="margin-bottom:16px">
+            <div>
+              <h2 class="section-title" id="broker-title">Chọn công ty chứng khoán</h2>
+              <p class="section-sub">Các công ty liên kết, đều được Ủy ban Chứng khoán Nhà nước cấp phép.</p>
+            </div>
+          </div>
+          <fieldset style="border:0;padding:0;margin:0">
+            <legend class="sr-only">Công ty chứng khoán</legend>
+            <div class="broker-grid" data-brokers></div>
+          </fieldset>
+          <p class="broker-note"><span data-icon="info"></span><span>Chưa biết chọn công ty nào? Người mới nên ưu tiên ứng dụng dễ dùng và phí thấp. Chuyên viên sẽ so sánh biểu phí giúp bạn khi gọi lại.</span></p>
+        </div>
+
+        <div class="panel panel-pad" data-signup>
+          <form class="signup-form" novalidate data-signup-form>
+            <h2>Đăng ký mở tài khoản</h2>
+            <p>Chuyên viên sẽ gọi lại trong 15 phút để hướng dẫn bạn hoàn tất eKYC.</p>
+            <div class="selected-broker"><span>Công ty đã chọn</span><b data-selected-broker>SSI</b></div>
+            <div class="field">
+              <label for="su-name">Họ và tên</label>
+              <input class="input" id="su-name" name="fullname" autocomplete="name" required>
+              <span class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="su-phone">Số điện thoại</label>
+              <input class="input" id="su-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx" required>
+              <span class="field-error" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="su-email">Email (không bắt buộc)</label>
+              <input class="input" id="su-email" name="email" type="email" autocomplete="email">
+              <span class="field-error" aria-live="polite"></span>
+            </div>
+            <label class="consent"><input type="checkbox" name="consent" required><span>Tôi đồng ý để Đầu tư cùng Vũ và công ty chứng khoán đã chọn liên hệ hỗ trợ mở tài khoản.</span></label>
+            <span class="field-error" data-consent-error aria-live="polite"></span>
+            <button class="btn btn--green btn--lg btn--block" type="submit">Gửi đăng ký</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-labelledby="faq-title">
+      <div class="container" style="max-width:880px">
+        <h2 class="section-title" id="faq-title" style="margin-bottom:18px">Câu hỏi thường gặp</h2>
+        <div class="faq">
+          <details open>
+            <summary>Mở tài khoản có mất phí không?<span data-icon="chevronDown"></span></summary>
+            <p>Không. Mở tài khoản tại tất cả công ty liên kết đều miễn phí. Bạn chỉ trả phí khi đặt lệnh mua hoặc bán thành công.</p>
+          </details>
+          <details>
+            <summary>Cần chuẩn bị giấy tờ gì?<span data-icon="chevronDown"></span></summary>
+            <p>Chỉ cần căn cước công dân gắn chip còn hiệu lực và số điện thoại chính chủ để nhận mã OTP.</p>
+          </details>
+          <details>
+            <summary>Làm sao để nhận miễn phí trọn bộ khóa học?<span data-icon="chevronDown"></span></summary>
+            <p>Sau khi tài khoản được kích hoạt và nạp tối thiểu 50 triệu đồng, gửi mã số tài khoản cho đội hỗ trợ. Quyền truy cập Premium được mở trong vòng 24 giờ.</p>
+          </details>
+          <details>
+            <summary>Tôi có thể đổi công ty chứng khoán sau này không?<span data-icon="chevronDown"></span></summary>
+            <p>Có. Bạn có thể mở thêm tài khoản ở công ty khác hoặc chuyển cổ phiếu giữa các tài khoản bất cứ lúc nào.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" aria-label="Ưu đãi">
+      <div class="promo">
+        <span class="promo-icon" data-icon="gift"></span>
+        <div>
+          <h2>Ưu đãi đặc biệt</h2>
+          <p>Mở tài khoản và nạp từ 50 triệu đồng: <strong>miễn phí toàn bộ khóa học</strong> và tin tức độc quyền.</p>
+        </div>
+        <a class="btn btn--gold" href="#dang-ky">Đăng ký ngay</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-site-footer></footer>
 </body>
 </html>

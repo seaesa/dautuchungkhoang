@@ -2,23 +2,23 @@
 
 Dựng lại 6 trang từ `design.jpeg` (ảnh cắt từng trang nằm ở `design-crops/`).
 
-| Trang | URL | File |
+| Trang | URL | File gốc (sửa ở đây) |
 |---|---|---|
-| Trang chủ | `/` | `index.html` |
-| Khóa học (lộ trình 5 cấp độ) | `/khoa-hoc/` | `khoa-hoc/index.html` |
-| Tin tức theo mã cổ phiếu | `/tin-tuc/` | `tin-tuc/index.html` |
-| Mở tài khoản | `/mo-tai-khoan/` | `mo-tai-khoan/index.html` |
-| Dashboard (sau đăng nhập) | `/dashboard/` | `dashboard/index.html` |
-| Premium | `/premium/` | `premium/index.html` |
+| Trang chủ | `/` hoặc `/index.html` | `index.html` |
+| Khóa học (lộ trình 5 cấp độ) | `/khoa-hoc/` hoặc `/khoa-hoc.html` | `khoa-hoc/index.html` |
+| Tin tức theo mã cổ phiếu | `/tin-tuc/` hoặc `/tin-tuc.html` | `tin-tuc/index.html` |
+| Mở tài khoản | `/mo-tai-khoan/` hoặc `/mo-tai-khoan.html` | `mo-tai-khoan/index.html` |
+| Dashboard (sau đăng nhập) | `/dashboard/` hoặc `/dashboard.html` | `dashboard/index.html` |
+| Premium | `/premium/` hoặc `/premium.html` | `premium/index.html` |
 
-## URL không có `.html`
+## Hai URL cho mỗi trang
 
-Không dùng cấu hình server (không `.htaccess`, nginx, `vercel.json`...):
+Cả `/tin-tuc/` và `/tin-tuc.html` đều hiển thị trang đầy đủ, không redirect qua lại, không cần cấu hình server:
 
-- Mỗi trang là `index.html` trong thư mục riêng, nên mọi static server đều phục vụ được `/khoa-hoc/`.
-- Các file `khoa-hoc.html`, `tin-tuc.html`... ở thư mục gốc chỉ còn là trang chuyển hướng bằng JS (`location.replace`, giữ nguyên `?query` và `#hash`), có `<meta refresh>` dự phòng khi tắt JS. Link cũ vẫn dùng được.
-- Truy cập `/.../index.html` sẽ được `history.replaceState` rút gọn thành `/.../`.
-- Link do JS sinh ra dùng `UI.url("khoa-hoc/?tab=all")`, tính từ gốc site dựa trên vị trí `assets/js/ui.js`, nên vẫn đúng khi site đặt trong thư mục con (ví dụ GitHub Pages).
+- `tin-tuc/index.html` là **bản gốc**. Mọi chỉnh sửa làm ở đây.
+- `tin-tuc.html` ở thư mục gốc là **bản sinh ra** bằng `python3 scripts/sync-pages.py`, chỉ khác đường dẫn `../assets/` thành `assets/` và có thêm `<link rel="canonical">` trỏ về `/tin-tuc/` để công cụ tìm kiếm không coi là trùng nội dung.
+- **Sửa xong một trang thì chạy lại `python3 scripts/sync-pages.py`**, nếu không hai bản sẽ lệch nhau.
+- Link trong site luôn trỏ tới dạng `/slug/`. Link do JS sinh ra dùng `UI.url("khoa-hoc/?tab=all")`, tính từ vị trí `assets/js/ui.js`, nên đúng ở cả hai dạng URL và khi site đặt trong thư mục con.
 
 ## Chạy thử
 
