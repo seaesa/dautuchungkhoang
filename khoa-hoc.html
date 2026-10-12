@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Khóa học đầu tư chứng khoán | Đầu tư cùng Vũ</title>
+  <meta name="description" content="Lộ trình 5 cấp độ: từ người mới bắt đầu đến tự xây dựng danh mục đầu tư.">
+  <meta name="theme-color" content="#06142e">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/pages/courses.js" defer></script>
+</head>
+<body data-page="courses">
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+  <header data-site-header class="site-header"></header>
+
+  <main id="main">
+    <section class="page-banner">
+      <div class="container">
+        <div>
+          <h1>Khóa học đầu tư chứng khoán</h1>
+          <p>Học đúng thứ tự, hiểu sâu bản chất, áp dụng ngay vào thị trường Việt Nam.</p>
+        </div>
+        <svg class="books-art" viewBox="0 0 280 170" aria-hidden="true">
+          <ellipse cx="150" cy="158" rx="120" ry="10" fill="#040d20" opacity=".35"/>
+          <rect x="40" y="122" width="210" height="34" rx="5" fill="#16a34a"/>
+          <rect x="40" y="122" width="210" height="8" rx="4" fill="#4ade80"/>
+          <rect x="52" y="132" width="186" height="16" fill="#e7f7ed"/>
+          <rect x="60" y="92" width="180" height="32" rx="5" fill="#1e5bd8"/>
+          <rect x="60" y="92" width="180" height="8" rx="4" fill="#60a5fa"/>
+          <rect x="72" y="102" width="156" height="14" fill="#eaf1ff"/>
+          <rect x="50" y="64" width="190" height="30" rx="5" fill="#0a2352"/>
+          <rect x="62" y="74" width="166" height="12" fill="#f3f6fb"/>
+          <path d="M145 18 L215 42 L145 64 L75 42 Z" fill="#0a2352" stroke="#1b4f9e" stroke-width="2"/>
+          <path d="M108 50 V68 C108 76 182 76 182 68 V50 L145 62 Z" fill="#123a7a"/>
+          <path d="M205 46 V78" stroke="#f6c64a" stroke-width="3"/>
+          <circle cx="205" cy="82" r="6" fill="#f6c64a"/>
+          <g fill="#22c55e" opacity=".9"><rect x="14" y="96" width="8" height="40" rx="2"/><rect x="26" y="80" width="8" height="56" rx="2"/><rect x="254" y="70" width="8" height="66" rx="2"/><rect x="266" y="52" width="8" height="84" rx="2"/></g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="section" id="lo-trinh">
+      <div class="container">
+        <div class="courses-toolbar">
+          <div class="tabs" role="tablist" aria-label="Chế độ xem khóa học" data-course-tabs>
+            <button class="tab" role="tab" aria-selected="true" aria-controls="panel-path" data-value="path">Lộ trình học</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="panel-all" data-value="all">Tất cả khóa học</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="panel-mine" data-value="mine">Khóa học của tôi</button>
+          </div>
+          <div class="search-box">
+            <span data-icon="search"></span>
+            <label class="sr-only" for="course-search">Tìm khóa học</label>
+            <input class="input" id="course-search" type="search" placeholder="Tìm khóa học..." autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Lộ trình -->
+        <div id="panel-path" role="tabpanel" class="path-layout">
+          <nav class="path-nav panel panel-pad" aria-label="Các cấp độ trong lộ trình" style="padding:16px">
+            <h2>Lộ trình 5 cấp độ</h2>
+            <ol data-path-nav></ol>
+          </nav>
+          <article class="panel panel-pad" data-level aria-live="polite"></article>
+        </div>
+
+        <!-- Tất cả -->
+        <div id="panel-all" role="tabpanel" hidden>
+          <div class="grid-courses" data-all-courses></div>
+          <div class="empty-state" data-all-empty hidden>
+            <span data-icon="search"></span>
+            <h3>Không tìm thấy khóa học phù hợp</h3>
+            <p>Thử từ khóa ngắn hơn, ví dụ "phân tích" hoặc "cơ bản".</p>
+          </div>
+        </div>
+
+        <!-- Của tôi -->
+        <div id="panel-mine" role="tabpanel" hidden data-mine></div>
+      </div>
+    </section>
+  </main>
+
+  <footer data-site-footer></footer>
+</body>
+</html>

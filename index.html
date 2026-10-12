@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đầu tư cùng Vũ | Học đầu tư chứng khoán từ con số 0</title>
+  <meta name="description" content="Học đầu tư chứng khoán từ cơ bản đến nâng cao, đọc tin thị trường mỗi ngày và mở tài khoản chứng khoán nhanh chóng.">
+  <meta name="theme-color" content="#06142e">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/pages/home.js" defer></script>
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+  <header data-site-header class="site-header"></header>
+  <div data-market-strip class="market-strip"></div>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-skyline" data-hero-skyline></div>
+      <div class="container">
+        <div>
+          <h1 id="hero-title">Bạn mới bắt đầu <span>đầu tư chứng khoán?</span></h1>
+          <p class="hero-lead">Lộ trình học rõ ràng, ví dụ từ thị trường Việt Nam, giúp bạn tự xây dựng phương pháp đầu tư của riêng mình.</p>
+          <ol class="learn-path" aria-label="Lộ trình 4 bước">
+            <li>Học từ cơ bản</li>
+            <li>Hiểu thị trường</li>
+            <li>Biết phân tích</li>
+            <li>Tự xây phương pháp</li>
+          </ol>
+          <div class="hero-cta">
+            <a class="btn btn--gold btn--lg" href="khoa-hoc.html">Xem khóa học <span data-icon="arrowRight"></span></a>
+            <a class="btn btn--ghost-light btn--lg" href="mo-tai-khoan.html">Mở tài khoản miễn phí</a>
+          </div>
+        </div>
+
+        <figure class="chart-card" aria-label="Biểu đồ VN-Index minh họa">
+          <div class="chart-card-head">
+            <div>
+              <small>VN-Index</small>
+              <strong class="num" data-hero-value>1.281,45</strong>
+              <span class="chg num up" data-hero-change>+12,36 (+0,97%)</span>
+            </div>
+            <div class="tf" role="group" aria-label="Khung thời gian">
+              <button type="button" aria-pressed="false" data-tf="1M">1T</button>
+              <button type="button" aria-pressed="true" data-tf="3M">3T</button>
+              <button type="button" aria-pressed="false" data-tf="1Y">1N</button>
+            </div>
+          </div>
+          <div class="chart-canvas" data-hero-chart></div>
+          <figcaption class="chart-card-foot"><span>Đường vàng: trung bình động 6 phiên</span><span>Dữ liệu minh họa</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats" aria-label="Con số nổi bật">
+      <div class="container">
+        <ul>
+          <li><span class="ico" data-icon="book"></span><div><strong>100+</strong><span>Bài học chất lượng</span></div></li>
+          <li><span class="ico" data-icon="newspaper"></span><div><strong>50+</strong><span>Tin tức mỗi ngày</span></div></li>
+          <li><span class="ico" data-icon="expert"></span><div><strong>10+</strong><span>Chuyên gia phân tích</span></div></li>
+          <li><span class="ico" data-icon="users"></span><div><strong>1.000+</strong><span>Nhà đầu tư đồng hành</span></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Courses -->
+    <section class="section" aria-labelledby="featured-title">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="featured-title">Khóa học nổi bật</h2>
+            <p class="section-sub">Bắt đầu từ khóa cơ bản, sau đó đi sâu vào từng mảng phân tích.</p>
+          </div>
+          <a class="link-more" href="khoa-hoc.html?tab=all">Xem tất cả <span data-icon="arrowRight"></span></a>
+        </div>
+        <div class="grid-courses grid-courses--scroll" data-featured-courses></div>
+      </div>
+    </section>
+
+    <!-- News -->
+    <section class="section" style="padding-top:0" aria-labelledby="news-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="news-title">Tin tức thị trường mới nhất</h2>
+          <a class="link-more" href="tin-tuc.html">Xem tất cả <span data-icon="arrowRight"></span></a>
+        </div>
+        <div class="tabs tabs--line" role="tablist" aria-label="Chủ đề tin tức" data-home-news-tabs>
+          <button class="tab" role="tab" aria-selected="true" aria-controls="home-news-panel" data-value="thi-truong">Thị trường</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="home-news-panel" data-value="doanh-nghiep">Doanh nghiệp</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="home-news-panel" data-value="vi-mo">Vĩ mô</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="home-news-panel" data-value="quoc-te">Quốc tế</button>
+        </div>
+        <div class="home-news" id="home-news-panel" role="tabpanel" data-home-news></div>
+      </div>
+    </section>
+
+    <!-- Promo -->
+    <section class="container" aria-label="Ưu đãi thành viên">
+      <div class="promo">
+        <span class="promo-icon" data-icon="gift"></span>
+        <div>
+          <h2>Đặc quyền thành viên</h2>
+          <p>Mở tài khoản và nạp từ 50 triệu đồng để <strong>miễn phí toàn bộ khóa học</strong> và nhận tin tức độc quyền.</p>
+        </div>
+        <a class="btn btn--gold" href="mo-tai-khoan.html#dang-ky">Mở tài khoản ngay</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-site-footer></footer>
+</body>
+</html>

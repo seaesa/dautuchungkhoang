@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nội dung Premium | Đầu tư cùng Vũ</title>
+  <meta name="description" content="Bản tin thị trường đặc biệt, phân tích chuyên sâu và chiến lược đầu tư dành riêng cho thành viên Premium.">
+  <meta name="theme-color" content="#06142e">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/pages.css">
+  <script src="assets/js/data.js" defer></script>
+  <script src="assets/js/ui.js" defer></script>
+  <script src="assets/js/pages/premium.js" defer></script>
+</head>
+<body data-page="premium">
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+  <header data-site-header class="site-header"></header>
+
+  <main id="main">
+    <section class="page-banner premium-banner">
+      <div class="banner-art" data-banner-art></div>
+      <div class="container">
+        <span class="crown" data-icon="crown"></span>
+        <div>
+          <h1>Nội dung độc quyền cho thành viên Premium</h1>
+          <p>Phân tích chuyên sâu, bản tin thị trường và cơ hội đầu tư chất lượng cao, chỉ dành riêng cho bạn.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-label="Quyền lợi Premium">
+      <div class="container">
+        <ul class="perks">
+          <li class="panel perk"><span class="ico" data-icon="newspaper"></span><h3>Bản tin thị trường đặc biệt</h3><p>Gửi mỗi sáng trước giờ mở cửa</p></li>
+          <li class="panel perk"><span class="ico" data-icon="file"></span><h3>Phân tích chuyên sâu</h3><p>Doanh nghiệp và ngành</p></li>
+          <li class="panel perk"><span class="ico" data-icon="target"></span><h3>Chiến lược đầu tư</h3><p>Dài hạn và lướt sóng ngắn hạn</p></li>
+          <li class="panel perk"><span class="ico" data-icon="message"></span><h3>Cộng đồng nhà đầu tư</h3><p>Thảo luận và hỏi đáp cùng chuyên gia</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-labelledby="bulletin-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="bulletin-title">Bản tin thị trường đặc biệt</h2>
+          <span class="data-note" data-lock-status></span>
+        </div>
+        <div class="lockable" data-lockable>
+          <article class="panel bulletin lock-content">
+            <div class="bulletin-body">
+              <h3>Bản tin thị trường ngày <span data-today></span></h3>
+              <time>Phát hành lúc 7:30, trước phiên giao dịch</time>
+              <ul class="bulletin-points">
+                <li><span data-icon="checkCircle"></span>Tổng quan thị trường và kịch bản phiên hôm nay</li>
+                <li><span data-icon="checkCircle"></span>Doanh nghiệp cần theo dõi</li>
+                <li><span data-icon="checkCircle"></span>Nhóm ngành đáng chú ý</li>
+                <li><span data-icon="checkCircle"></span>Lịch sự kiện sắp tới</li>
+                <li><span data-icon="checkCircle"></span>Dòng tiền và giao dịch khối ngoại</li>
+                <li><span data-icon="checkCircle"></span>Vùng hỗ trợ, kháng cự của VN-Index</li>
+              </ul>
+              <a class="btn btn--navy" href="#" data-premium-link>Đọc bản tin <span data-icon="arrowRight"></span></a>
+            </div>
+            <div class="bulletin-art" data-bulletin-art></div>
+          </article>
+          <div class="lock-overlay" data-lock-overlay></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" id="phan-tich" aria-labelledby="analysis-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="analysis-title">Phân tích chuyên sâu</h2>
+        </div>
+        <div class="lockable" data-lockable data-compact>
+          <div class="analysis-grid lock-content" data-analysis></div>
+          <div class="lock-overlay" data-lock-overlay></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container" aria-label="Chương trình đặc biệt">
+      <div class="promo">
+        <span class="promo-icon" data-icon="crown"></span>
+        <div>
+          <h2>Trở thành thành viên Premium miễn phí</h2>
+          <p>Mở tài khoản chứng khoán và nạp từ 50 triệu đồng để <strong>nhận trọn bộ khóa học và nội dung độc quyền</strong>.</p>
+        </div>
+        <a class="btn btn--gold" href="mo-tai-khoan.html#dang-ky">Mở tài khoản ngay</a>
+      </div>
+    </section>
+  </main>
+
+  <footer data-site-footer></footer>
+</body>
+</html>

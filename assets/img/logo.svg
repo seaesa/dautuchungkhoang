@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Đầu tư cùng Vũ">
+  <defs>
+    <linearGradient id="lg-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F6C64A"/>
+      <stop offset="1" stop-color="#E39B1B"/>
+    </linearGradient>
+    <linearGradient id="lg-leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#16A34A"/>
+      <stop offset="1" stop-color="#4ADE80"/>
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="21" fill="#0A2352" stroke="url(#lg-ring)" stroke-width="3"/>
+  <path d="M11 31 L19 24 L25 28 L36 15" fill="none" stroke="url(#lg-leaf)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M30 14 L37 14 L37 21" fill="none" stroke="url(#lg-leaf)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="13" y="33" width="4" height="5" rx="1" fill="#F6C64A"/>
+  <rect x="20" y="30" width="4" height="8" rx="1" fill="#F6C64A"/>
+  <rect x="27" y="32" width="4" height="6" rx="1" fill="#F6C64A"/>
+</svg>
