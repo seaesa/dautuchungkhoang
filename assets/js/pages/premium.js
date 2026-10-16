@@ -1,17 +1,11 @@
-/* Trang Premium */
+/* Trang gói hội viên: bảng giá 1/3/6/12 tháng, bảng quyền xem, nội dung độc quyền */
 (function () {
-  const { icon, Charts, Art, auth, toast, url } = UI;
+  const { icon, fmt, url, auth, access, Charts, newsItem, newsSorted, escapeHtml } = UI;
   const D = APP_DATA;
+  const S = D.site;
+  const M = S.membership;
 
-  const ANALYSES = [
-    { sector: "Ngân hàng", code: "MBB", title: "MBB: Cơ hội tăng trưởng từ bán lẻ số", date: "10/10/2026", art: "building" },
-    { sector: "Bất động sản", code: "VHM", title: "VHM: Triển vọng bàn giao năm 2027", date: "08/10/2026", art: "towers" },
-    { sector: "Điện", code: "REE", title: "REE: Dòng tiền ổn định từ thủy điện", date: "06/10/2026", art: "building-2" },
-    { sector: "Thép", code: "HPG", title: "HPG: Bước vào chu kỳ tăng trưởng mới", date: "03/10/2026", art: "skyline-night" },
-  ];
-
-  const today = new Date();
-  document.querySelector("[data-today]").textContent = today.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  document.querySelectorAll("[data-price-month]").forEach((el) => (el.textContent = fmt.vnd(M.pricePerMonth)));
 
   const bannerArt = document.querySelector("[data-banner-art]");
   bannerArt.innerHTML = Charts.candles(Charts.ohlc(50, "premium", 100, 0.05, 0.03), { w: 1200, h: 220, up: "#f6c64a", down: "#b7791f", ma: false });
@@ -19,68 +13,79 @@
   bannerArt.style.maskImage = "linear-gradient(90deg, transparent 35%, #000 85%)";
   bannerArt.style.webkitMaskImage = bannerArt.style.maskImage;
 
-  document.querySelector("[data-bulletin-art]").innerHTML = Art.thumb("skyline-night", "bulletin");
-
-  document.querySelector("[data-analysis]").innerHTML = ANALYSES.map((a) => {
-    const tk = D.tickers.find((t) => t.code === a.code);
-    return (
-      '<article class="panel analysis"><div class="thumb">' + Art.thumb(a.art, "pa" + a.code, tk && tk.color) + "</div>" +
-      '<div><span class="sector">' + a.sector + '</span><span class="lock-pill">' + icon("lock") + 'Premium</span><h3><a href="#" data-premium-link>' + a.title + "</a></h3><time>" + a.date + "</time></div></article>"
-    );
-  }).join("");
-
-  function gate(user, compact) {
-    const login = user ? "" : '<button class="btn btn--navy btn--sm" type="button" data-login>Đăng nhập</button>';
-    const signup = '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản</a>';
-    if (compact) {
-      return (
-        '<div class="lock-box lock-box--row" tabindex="-1">' + icon("lock") +
-        "<p><b>4 bài phân tích đang khóa.</b> " + (user ? "Nâng cấp Premium để đọc toàn bộ và mở thư viện báo cáo ngành." : "Đăng nhập hoặc mở tài khoản để đọc toàn bộ và mở thư viện báo cáo ngành.") + "</p>" +
-        '<div class="row">' + login + signup + "</div></div>"
-      );
-    }
-    const title = user ? "Nâng cấp Premium để đọc trọn bản tin" : "Đọc trọn bản tin với tài khoản Premium";
-    const text = user
-      ? "Mở tài khoản chứng khoán liên kết và nạp từ 50 triệu đồng để kích hoạt Premium miễn phí."
-      : "Đăng nhập nếu bạn đã là thành viên, hoặc mở tài khoản để nhận quyền truy cập miễn phí.";
-    return '<div class="lock-box" tabindex="-1">' + icon("lock") + "<h3>" + title + "</h3><p>" + text + '</p><div class="row">' + login + signup + "</div></div>";
-  }
-
-  function isUnlocked() {
+  function status() {
     const u = auth.user();
-    return !!(u && u.premium);
-  }
-
-  function applyLock() {
-    const u = auth.user();
-    const unlocked = isUnlocked();
-    document.querySelectorAll("[data-lockable]").forEach((el) => {
-      el.classList.toggle("is-locked", !unlocked);
-      const slot = el.querySelector("[data-lock-gate]");
-      if (slot) slot.innerHTML = unlocked ? "" : gate(u, el.hasAttribute("data-compact"));
-    });
-    document.querySelector("[data-lock-status]").innerHTML = unlocked
-      ? icon("checkCircle") + "Bạn đang là thành viên Premium"
-      : icon("lock") + "Cần tài khoản Premium";
-  }
-
-  document.addEventListener("click", (e) => {
-    const link = e.target.closest("[data-premium-link]");
-    if (!link) return;
-    e.preventDefault();
-    if (isUnlocked()) {
-      toast("Bài viết đầy đủ sẽ hiển thị khi kết nối với hệ thống nội dung.", "info");
+    const el = document.querySelector("[data-member-status]");
+    if (!u) {
+      el.innerHTML = "";
       return;
     }
-    // Đang khóa: đưa người dùng tới hộp mời mở khóa gần nhất
-    const box = link.closest("[data-lockable]")?.querySelector(".lock-box");
-    if (box) {
-      box.scrollIntoView({ behavior: "smooth", block: "center" });
-      box.focus({ preventScroll: true });
-    }
-    toast("Bài này dành cho thành viên Premium.", "lock");
-  });
+    const role = access.role(u);
+    let text;
+    if (role === "vip") text = "Bạn đang dùng <b>tài khoản Đầu tư cùng Vũ</b>: xem toàn bộ nội dung, không giới hạn thời gian.";
+    else if (role === "member") text = "Bạn là <b>hội viên</b> tới ngày <b>" + fmt.date(u.memberUntil) + "</b>. Gia hạn trước ngày này để không bị gián đoạn.";
+    else if (access.memberExpired(u)) text = "Gói hội viên của bạn đã hết hạn ngày <b>" + fmt.date(u.memberUntil) + "</b>. Chọn gói bên dưới để gia hạn.";
+    else text = "Bạn đang là <b>thành viên thường</b>. Chọn một gói bên dưới để xem nhận định và bài viết độc quyền.";
+    el.innerHTML = '<div class="container"><p class="member-status member-status--' + role + '">' + icon(role === "vip" ? "shield" : role === "member" ? "crown" : "info") + "<span>" + text + "</span></p></div>";
+  }
 
-  document.addEventListener("auth:change", applyLock);
-  applyLock();
+  function plans() {
+    const u = auth.user();
+    const best = 12;
+    document.querySelector("[data-plans]").innerHTML =
+      M.months
+        .map((m) => {
+          const total = M.pricePerMonth * m;
+          return (
+            '<article class="panel plan' + (m === best ? " plan--best" : "") + '">' +
+            (m === best ? '<span class="plan-flag">Dài hạn</span>' : "") +
+            "<h3>" + m + " tháng</h3>" +
+            '<p class="plan-price">' + fmt.vnd(total) + "</p>" +
+            "<small>" + fmt.vnd(M.pricePerMonth) + " / tháng</small>" +
+            '<a class="btn ' + (m === best ? "btn--gold" : "btn--navy") + ' btn--block" href="' + url("thanh-toan/") + "?goi=" + m + '">' + (access.memberActive(u) ? "Gia hạn" : "Chọn gói") + "</a></article>"
+          );
+        })
+        .join("") +
+      '<article class="panel plan plan--vip"><h3>Tài khoản 50 triệu</h3><p class="plan-price">Miễn phí</p><small>Không giới hạn thời gian</small>' +
+      "<p>" + escapeHtml(S.offerTitle) + " với vốn từ " + S.minCapital + ".</p>" +
+      '<a class="btn btn--outline btn--block" href="' + url("mo-tai-khoan/") + '">Xem cách làm</a></article>';
+  }
+
+  function matrix() {
+    const yes = '<span class="mx-yes">' + icon("check") + '<span class="sr-only">Có</span></span>';
+    const no = '<span class="mx-no">–<span class="sr-only">Không</span></span>';
+    const cols = ["Khách", "Đã đăng nhập", "Hội viên", "Đã mua khóa", "Tài khoản 50tr"];
+    const rows = [
+      ["Tin tức thường", [1, 1, 1, 1, 1]],
+      ["Tin cần đăng nhập", [0, 1, 1, 1, 1]],
+      ["Nhận định thị trường", [0, 0, 1, 0, 1]],
+      ["Bài viết, video độc quyền hội viên", [0, 0, 1, 0, 1]],
+      ["Khóa học miễn phí", [1, 1, 1, 1, 1]],
+      ["Khóa học có phí", [0, 0, 0, "Khóa đã mua", 1]],
+      ["Nội dung riêng tài khoản 50tr", [0, 0, 0, 0, 1]],
+      ["Thời hạn", ["–", "–", "Theo gói", "Không giới hạn", "Không giới hạn"]],
+    ];
+    const cell = (v) => (v === 1 ? yes : v === 0 ? no : '<span class="mx-text">' + v + "</span>");
+    const mine = { guest: 0, user: 1, member: 2, vip: 4 }[access.role()];
+    document.querySelector("[data-access-table]").innerHTML =
+      '<table class="matrix"><thead><tr><th scope="col">Nội dung</th>' +
+      cols.map((c, i) => '<th scope="col"' + (i === mine ? ' class="is-mine"' : "") + ">" + c + (i === mine ? "<small>Bạn</small>" : "") + "</th>").join("") +
+      "</tr></thead><tbody>" +
+      rows.map(([label, vals]) => '<tr><th scope="row">' + label + "</th>" + vals.map((v, i) => '<td data-col="' + cols[i] + (i === mine ? " (bạn)" : "") + '"' + (i === mine ? ' class="is-mine"' : "") + ">" + cell(v) + "</td>").join("") + "</tr>").join("") +
+      "</tbody></table>";
+  }
+
+  function exclusive() {
+    const list = newsSorted(D.news.filter((n) => n.access === "member" || n.access === "vip")).slice(0, 4);
+    document.querySelector("[data-exclusive]").innerHTML = list.map(newsItem).join("");
+  }
+
+  function render() {
+    status();
+    plans();
+    matrix();
+    exclusive();
+  }
+  document.addEventListener("auth:change", render);
+  render();
 })();

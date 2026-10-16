@@ -1,6 +1,6 @@
 /* Trang chủ */
 (function () {
-  const { Charts, Art, fmt, icon, rng, courseCard, escapeHtml, url } = UI;
+  const { rng, courseCard, newsSorted, escapeHtml, url, icon, fmt, accessBadge, articleUrl, Art } = UI;
   const D = APP_DATA;
 
   /* ----- Hero skyline (decorative) ----- */
@@ -27,58 +27,44 @@
   const sky = document.querySelector("[data-hero-skyline]");
   if (sky) sky.innerHTML = skyline();
 
-  /* ----- Hero candlestick chart ----- */
-  const chartEl = document.querySelector("[data-hero-chart]");
-  const frames = { "1M": 22, "3M": 40, "1Y": 52 };
-  function drawHero(tf) {
-    const bars = Charts.ohlc(frames[tf], "vni-" + tf, 1180, 0.022, 0.03);
-    chartEl.innerHTML = Charts.candles(bars, { w: 600, h: 240, animate: true });
-  }
-  if (chartEl) {
-    drawHero("3M");
-    document.querySelectorAll("[data-tf]").forEach((b) => {
-      b.addEventListener("click", () => {
-        document.querySelectorAll("[data-tf]").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
-        drawHero(b.dataset.tf);
-      });
-    });
-    const vni = D.indices[0];
-    document.querySelector("[data-hero-value]").textContent = fmt.index(vni.value);
-    const pct = (vni.change / (vni.value - vni.change)) * 100;
-    const ch = document.querySelector("[data-hero-change]");
-    ch.textContent = fmt.change(vni.change) + " (" + fmt.pct(pct) + ")";
-    ch.className = "chg num " + fmt.cls(vni.change);
-  }
-
-  /* ----- Featured courses ----- */
+  /* ----- Khóa học: khóa miễn phí trước, tối đa 4 ----- */
   const fc = document.querySelector("[data-featured-courses]");
-  if (fc) fc.innerHTML = D.courses.slice(0, 4).map(courseCard).join("");
+  if (fc) fc.innerHTML = D.courses.slice().sort((a, b) => (a.price ? 1 : 0) - (b.price ? 1 : 0)).slice(0, 4).map(courseCard).join("");
 
-  /* ----- News by topic ----- */
+  /* ----- Tin tức: bài mới nhất làm tin chính, các bài kế tiếp ở danh sách bên cạnh ----- */
+  const TOPICS = [{ id: "", label: "Mới nhất" }].concat(D.newsTags.filter((t) => ["thi-truong", "nhan-dinh", "doanh-nghiep", "vi-mo", "quoc-te"].includes(t.id)));
+  const tabList = document.querySelector("[data-home-news-tabs]");
   const newsEl = document.querySelector("[data-home-news]");
+  const moreLink = document.querySelector("[data-news-more]");
+
   function renderNews(topic) {
-    const list = D.news.filter((n) => n.market === topic);
-    const pool = list.length >= 4 ? list : list.concat(D.news.filter((n) => n.market !== topic));
-    const [lead, ...rest] = pool;
-    const tk = lead.ticker && D.tickers.find((t) => t.code === lead.ticker);
+    const list = newsSorted(topic ? D.news.filter((n) => n.tags.includes(topic)) : D.news);
+    moreLink.href = url("tin-tuc/") + (topic ? "?chu-de=" + topic : "");
+    if (!list.length) {
+      newsEl.innerHTML = '<p class="empty-state">Chưa có bài viết trong mục này.</p>';
+      return;
+    }
+    const [lead, ...rest] = list;
+    const tk = D.tickers.find((t) => lead.tags.includes(t.code));
     newsEl.innerHTML =
       '<article class="panel news-feature">' +
       '<div class="news-thumb">' + Art.thumb(lead.art, "n" + lead.id, tk && tk.color) + "</div>" +
-      '<div><h3><a href="' + url("tin-tuc/") + (lead.ticker ? "?ma=" + lead.ticker : "") + '">' + escapeHtml(lead.title) + "</a></h3>" +
-      '<p class="news-excerpt">' + escapeHtml(lead.excerpt) + '</p><p class="news-date"><time>' + lead.date + "</time></p></div></article>" +
+      '<div><p class="news-date"><span class="badge badge--green">Mới nhất</span>' + accessBadge(lead.access) + "</p>" +
+      '<h3><a href="' + articleUrl(lead) + '">' + escapeHtml(lead.title) + "</a></h3>" +
+      '<p class="news-excerpt">' + escapeHtml(lead.excerpt) + '</p><p class="news-date"><time>' + fmt.date(lead.date) + "</time></p></div></article>" +
       '<ul class="panel headline-list">' +
-      rest
-        .slice(0, 4)
-        .map(
-          (n) =>
-            '<li><a href="' + url("tin-tuc/") + (n.ticker ? "?ma=" + n.ticker : "") + '"><span class="hl-ico">' + icon("newspaper") + "</span><span>" + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>"
-        )
-        .join("") +
+      (rest.length
+        ? rest
+            .slice(0, 5)
+            .map((n) => '<li><a href="' + articleUrl(n) + '"><span class="hl-ico">' + icon(n.access === "public" ? "newspaper" : "lock") + "</span><span>" + escapeHtml(n.title) + "<time>" + fmt.date(n.date) + "</time></span></a></li>")
+            .join("")
+        : '<li class="hl-empty">Bài tiếp theo sẽ hiện ở đây.</li>') +
       "</ul>";
   }
-  const tabList = document.querySelector("[data-home-news-tabs]");
-  if (newsEl && tabList) {
+
+  if (tabList && newsEl) {
+    tabList.innerHTML = TOPICS.map((t, i) => '<button class="tab" role="tab" aria-selected="' + (i === 0) + '" aria-controls="home-news-panel" data-value="' + t.id + '">' + (t.id === "nhan-dinh" ? "Nhận định" : t.label) + "</button>").join("");
     UI.tabs(tabList, renderNews);
-    renderNews("thi-truong");
+    renderNews("");
   }
 })();

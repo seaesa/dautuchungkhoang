@@ -1321,6 +1321,222 @@ main > .section:last-child {
   }
 }
 
+/* ---------- Ảnh đại diện thương hiệu ---------- */
+.brand-photo {
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--gold-400);
+}
+
+/* Nút Zalo */
+.btn--blue {
+  --btn-bg: #0068ff;
+  --btn-fg: #fff;
+  --btn-bd: #0068ff;
+}
+.btn--blue:hover {
+  --btn-bg: #0057d6;
+  --btn-bd: #0057d6;
+}
+
+/* ---------- Giá khóa học ---------- */
+.price {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--r-pill);
+  background: var(--navy-800);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.price svg {
+  width: 14px;
+  height: 14px;
+}
+.price--free {
+  background: var(--green-50);
+  color: var(--green-600);
+}
+.price--owned {
+  background: var(--blue-50);
+  color: var(--blue-500);
+}
+.course-meta .price {
+  margin-left: auto;
+}
+.course-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.course-kind {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(6, 20, 46, 0.75);
+  color: #fff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+.course-kind svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ---------- Nhãn quyền xem & thẻ chủ đề ---------- */
+.access-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: var(--r-pill);
+  background: var(--gold-50);
+  color: #8a5f00;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+.access-badge svg {
+  width: 12px;
+  height: 12px;
+}
+.access-badge--user {
+  background: var(--blue-50);
+  color: var(--blue-500);
+}
+.access-badge--vip {
+  background: var(--navy-800);
+  color: var(--gold-400);
+}
+.news-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.news-tags .ticker-tag {
+  margin: 0;
+}
+
+/* ---------- Video YouTube ---------- */
+.video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: var(--navy-900);
+}
+.video button,
+.video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.88;
+}
+.video-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.video-play svg {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+  transition: transform 0.18s var(--ease);
+}
+.video button:hover .video-play svg {
+  transform: scale(1.08);
+}
+.video--empty {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75);
+  background: radial-gradient(80% 90% at 80% 10%, rgba(30, 91, 216, 0.45), transparent 60%), var(--navy-800);
+}
+.video--empty > svg {
+  width: 56px;
+  height: 56px;
+  color: var(--gold-400);
+}
+.video--empty b {
+  display: block;
+  color: #fff;
+}
+.video--empty span {
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Dòng thông tin có nút sao chép ---------- */
+.copy-row {
+  display: grid;
+  grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+}
+.copy-row > span {
+  color: var(--muted);
+}
+.copy-row b {
+  color: var(--navy-800);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Đăng nhập demo theo vai trò ---------- */
+.demo-roles {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line-strong);
+}
+.demo-roles p {
+  margin-bottom: 8px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.demo-roles div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.page-banner--slim .container {
+  min-height: 0;
+  padding-block: 32px;
+}
+@media (max-width: 520px) {
+  .copy-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .copy-row > span {
+    grid-column: 1 / -1;
+    margin-bottom: -6px;
+    font-size: var(--fs-xs);
+  }
+}
+
 /* ---------- Motion preferences ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nội dung Premium | Đầu tư cùng Vũ</title>
-  <meta name="description" content="Bản tin thị trường đặc biệt, phân tích chuyên sâu và chiến lược đầu tư dành riêng cho thành viên Premium.">
+  <title>Gói hội viên | Đầu tư cùng Vũ</title>
+  <meta name="description" content="Gói hội viên Đầu tư cùng Vũ: nhận định thị trường, bài viết độc quyền và video hội viên, từ 68.000đ/tháng.">
   <meta name="theme-color" content="#06142e">
-  <link rel="icon" href="../assets/img/logo.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/img/vu-128.jpg" type="image/jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,71 +26,56 @@
       <div class="container">
         <span class="crown" data-icon="crown"></span>
         <div>
-          <h1>Nội dung độc quyền cho thành viên Premium</h1>
-          <p>Phân tích chuyên sâu, bản tin thị trường và cơ hội đầu tư chất lượng cao, chỉ dành riêng cho bạn.</p>
+          <h1>Gói hội viên Đầu tư cùng Vũ</h1>
+          <p>Nhận định thị trường mỗi sáng, bài viết độc quyền và video dành riêng cho hội viên. Chỉ từ <b data-price-month>68.000đ</b>/tháng.</p>
         </div>
       </div>
     </section>
 
-    <section class="section" aria-label="Quyền lợi Premium">
-      <div class="container">
-        <ul class="perks">
-          <li class="panel perk"><span class="ico" data-icon="newspaper"></span><h3>Bản tin thị trường đặc biệt</h3><p>Gửi mỗi sáng trước giờ mở cửa</p></li>
-          <li class="panel perk"><span class="ico" data-icon="file"></span><h3>Phân tích chuyên sâu</h3><p>Doanh nghiệp và ngành</p></li>
-          <li class="panel perk"><span class="ico" data-icon="target"></span><h3>Chiến lược đầu tư</h3><p>Dài hạn và lướt sóng ngắn hạn</p></li>
-          <li class="panel perk"><span class="ico" data-icon="message"></span><h3>Cộng đồng nhà đầu tư</h3><p>Thảo luận và hỏi đáp cùng chuyên gia</p></li>
-        </ul>
-      </div>
-    </section>
+    <div data-member-status></div>
 
-    <section class="section" style="padding-top:0" aria-labelledby="bulletin-title">
+    <section class="section" aria-labelledby="plans-title">
       <div class="container">
         <div class="section-head">
-          <h2 class="section-title" id="bulletin-title">Bản tin thị trường đặc biệt</h2>
-          <span class="data-note" data-lock-status></span>
+          <div>
+            <h2 class="section-title" id="plans-title">Chọn thời hạn hội viên</h2>
+            <p class="section-sub">Thanh toán bằng chuyển khoản QR. Thời hạn tính từ ngày Vũ kích hoạt, hết hạn tài khoản tự về thành viên thường.</p>
+          </div>
         </div>
-        <div class="lockable" data-lockable>
-          <article class="panel bulletin lock-content">
-            <div class="bulletin-body">
-              <h3>Bản tin thị trường ngày <span data-today></span></h3>
-              <time>Phát hành lúc 7:30, trước phiên giao dịch</time>
-              <ul class="bulletin-points" data-lock-fade>
-                <li><span data-icon="checkCircle"></span>Tổng quan thị trường và kịch bản phiên hôm nay</li>
-                <li><span data-icon="checkCircle"></span>Doanh nghiệp cần theo dõi</li>
-                <li><span data-icon="checkCircle"></span>Nhóm ngành đáng chú ý</li>
-                <li><span data-icon="checkCircle"></span>Lịch sự kiện sắp tới</li>
-                <li data-lock-hide><span data-icon="checkCircle"></span>Dòng tiền và giao dịch khối ngoại</li>
-                <li data-lock-hide><span data-icon="checkCircle"></span>Vùng hỗ trợ, kháng cự của VN-Index</li>
-              </ul>
-              <a class="btn btn--navy" href="#" data-premium-link data-lock-hide>Đọc bản tin <span data-icon="arrowRight"></span></a>
-              <div class="lock-gate" data-lock-gate></div>
-            </div>
-            <div class="bulletin-art" data-bulletin-art></div>
-          </article>
-        </div>
+        <div class="plans" data-plans></div>
       </div>
     </section>
 
-    <section class="section" style="padding-top:0" id="phan-tich" aria-labelledby="analysis-title">
+    <section class="section" style="padding-top:0" aria-labelledby="matrix-title">
       <div class="container">
         <div class="section-head">
-          <h2 class="section-title" id="analysis-title">Phân tích chuyên sâu</h2>
+          <div>
+            <h2 class="section-title" id="matrix-title">Ai được xem gì</h2>
+            <p class="section-sub">Mỗi bài viết, video được gắn quyền xem riêng. Bảng dưới là quyền mặc định.</p>
+          </div>
         </div>
-        <div class="lockable" data-lockable data-compact>
-          <div class="analysis-grid lock-content" data-analysis></div>
-          <div class="lock-gate" data-lock-gate></div>
-        </div>
+        <div class="panel matrix-wrap" data-access-table></div>
       </div>
     </section>
 
-    <section class="container" aria-label="Chương trình đặc biệt">
-      <div class="promo">
-        <span class="promo-icon" data-icon="crown"></span>
-        <div>
-          <h2>Trở thành thành viên Premium miễn phí</h2>
-          <p>Mở tài khoản chứng khoán và nạp từ 50 triệu đồng để <strong>nhận trọn bộ khóa học và nội dung độc quyền</strong>.</p>
+    <section class="section" style="padding-top:0" aria-labelledby="excl-title">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title" id="excl-title">Nội dung độc quyền mới nhất</h2>
+          <a class="link-more" href="../tin-tuc/?chu-de=nhan-dinh">Tất cả nhận định <span data-icon="arrowRight"></span></a>
         </div>
-        <a class="btn btn--gold" href="../mo-tai-khoan/#dang-ky">Mở tài khoản ngay</a>
+        <div class="panel" style="padding:8px"><div class="news-list" data-exclusive></div></div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:0" aria-labelledby="how-title">
+      <div class="container">
+        <h2 class="section-title" id="how-title" style="margin-bottom:18px">Kích hoạt hội viên thế nào?</h2>
+        <ol class="how-steps">
+          <li><b>Chọn gói và chuyển khoản</b><span>Quét mã QR ở trang thanh toán, ghi đúng nội dung chuyển khoản.</span></li>
+          <li><b>Vũ xác nhận</b><span>Gửi biên lai qua Zalo để được kích hoạt nhanh hơn.</span></li>
+          <li><b>Bắt đầu xem</b><span>Thời hạn tính từ ngày kích hoạt. Hết hạn thì gia hạn lại ở trang thanh toán.</span></li>
+        </ol>
       </div>
     </section>
   </main>

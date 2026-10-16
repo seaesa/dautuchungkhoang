@@ -1,17 +1,17 @@
 /* Dashboard (sau khi đăng nhập) */
 (function () {
-  const { icon, fmt, Charts, Art, store, auth, escapeHtml, url } = UI;
+  const { icon, fmt, Charts, Art, store, auth, escapeHtml, url, access, newsSorted, articleUrl, courseThumb } = UI;
   const D = APP_DATA;
   const root = document.querySelector("[data-dashboard]");
   let indexSel = 0;
 
   const SIDE = [
     { href: url("dashboard/"), icon: "home", label: "Tổng quan", current: true },
-    { href: url("khoa-hoc/?tab=mine"), icon: "book", label: "Khóa học của tôi" },
+    { href: url("khoa-hoc/?loc=mine"), icon: "book", label: "Khóa học của tôi" },
     { href: url("tin-tuc/"), icon: "newspaper", label: "Tin tức theo dõi" },
     { href: "#danh-muc", icon: "briefcase", label: "Danh mục quan tâm" },
-    { href: url("premium/"), icon: "crown", label: "Nội dung Premium" },
-    { href: url("mo-tai-khoan/"), icon: "user", label: "Tài khoản chứng khoán" },
+    { href: url("premium/"), icon: "crown", label: "Gói hội viên" },
+    { href: url("mo-tai-khoan/"), icon: "user", label: "Mở tài khoản / chuyển ID" },
   ];
 
   function gate() {
@@ -20,7 +20,7 @@
       "<h1>Đăng nhập để xem trang tổng quan</h1>" +
       "<p>Theo dõi tiến độ học, danh mục cổ phiếu quan tâm và tin tức của bạn ở cùng một nơi.</p>" +
       '<div class="actions"><button class="btn btn--navy btn--lg" type="button" data-login>Đăng nhập</button>' +
-      '<button class="btn btn--outline" type="button" data-demo-login>Xem bằng tài khoản demo</button></div></div></div>';
+      '<button class="btn btn--outline" type="button" data-demo-login="vip">Xem bằng tài khoản demo</button></div></div></div>';
   }
 
   function greeting() {
@@ -29,41 +29,58 @@
   }
 
   function render(user) {
-    const progress = store.get("dtcv-progress", null) || [2, 0, 0, 0, 0];
+    let progress = store.get("dtcv-progress", {});
+    if (!progress || Array.isArray(progress)) progress = {};
     const follows = store.get("dtcv-follow", []);
-    const totalLessons = D.path.reduce((a, p) => a + p.lessons.length, 0);
-    const doneLessons = progress.reduce((a, b) => a + b, 0);
-    const curLevel = Math.max(0, progress.findIndex((d, i) => d < D.path[i].lessons.length));
-    const lvl = D.path[curLevel];
-    const nextLesson = lvl.lessons[progress[curLevel]] || lvl.lessons[lvl.lessons.length - 1];
+    const orders = store.get("dtcv-orders", []).filter((o) => o.status === "pending");
+    const role = access.role(user);
+    const myCourses = D.courses.filter((c) => access.ownsCourse(c, user));
+    const totalLessons = myCourses.reduce((a, c) => a + c.lessons.length, 0);
+    const doneLessons = myCourses.reduce((a, c) => a + (progress[c.id] || []).length, 0);
+    // Học tiếp: khóa đang học dở gần nhất, nếu chưa có thì khóa đầu tiên xem được
+    const cur = myCourses.find((c) => (progress[c.id] || []).length && progress[c.id].length < c.lessons.length) || myCourses[0] || D.courses[0];
+    const curDone = progress[cur.id] || [];
+    const nextIdx = Math.max(0, cur.lessons.findIndex((l, i) => !curDone.includes(i)));
+    const nextLesson = cur.lessons[nextIdx];
     const watch = (follows.length ? follows : ["MBB", "FPT", "VNM", "REE", "SSI"]).map((c) => D.tickers.find((t) => t.code === c)).filter(Boolean);
-    const feed = D.news.filter((n) => n.ticker && watch.some((w) => w.code === n.ticker)).concat(D.news.filter((n) => !n.ticker)).slice(0, 4);
+    const feed = newsSorted(D.news.filter((n) => n.tags.some((t) => watch.some((w) => w.code === t)))).concat(newsSorted(D.news.filter((n) => !n.tags.some((t) => watch.some((w) => w.code === t))))).slice(0, 4);
+    const tier = {
+      vip: { cls: "", ico: "shield", b: "TÀI KHOẢN 50TR", small: "Xem toàn bộ, không giới hạn" },
+      member: { cls: "", ico: "crown", b: "HỘI VIÊN", small: "Hết hạn " + fmt.date(user.memberUntil || "") },
+      user: { cls: " tier--free", ico: "starLine", b: access.memberExpired(user) ? "Hội viên đã hết hạn" : "Thành viên", small: access.memberExpired(user) ? "Gia hạn hội viên" : "Nâng cấp hội viên" },
+    }[role];
 
     root.innerHTML =
       '<div class="app">' +
       '<aside class="app-side" aria-label="Menu tài khoản"><nav><ul>' +
       SIDE.map((s) => '<li><a href="' + s.href + '"' + (s.current ? ' aria-current="page"' : "") + ">" + icon(s.icon) + s.label + "</a></li>").join("") +
       "</ul></nav>" +
-      (user.premium
-        ? '<div class="side-premium"><b>' + icon("crown") + "Thành viên Premium</b><p>Bản tin đặc biệt hôm nay đã sẵn sàng.</p></div>"
-        : '<div class="side-premium"><b>' + icon("crown") + 'Nâng cấp Premium</b><p>Mở tài khoản, nạp từ 50 triệu để mở khóa toàn bộ nội dung.</p></div>') +
+      (role === "user"
+        ? '<div class="side-premium"><b>' + icon("crown") + "Xem toàn bộ nội dung</b><p>Đăng ký hội viên từ " + fmt.vnd(D.site.membership.pricePerMonth) + "/tháng, hoặc mở / chuyển tài khoản 50 triệu về Vũ để xem miễn phí.</p></div>"
+        : '<div class="side-premium"><b>' + icon("crown") + access.roleName[role] + "</b><p>Nhận định thị trường hôm nay đã sẵn sàng.</p></div>") +
       "</aside>" +
       '<div class="app-main">' +
       // Welcome
       '<div class="welcome"><div><h1>' + greeting() + ", " + escapeHtml(user.name) + "</h1><p>Chúc bạn một ngày giao dịch hiệu quả.</p></div>" +
-      (user.premium
-        ? '<div class="tier">' + icon("crown") + "<div><b>PREMIUM</b><small>Thành viên</small></div></div>"
-        : '<a class="tier tier--free" href="' + url("premium/") + '">' + icon("starLine") + "<div><b>Miễn phí</b><small>Nâng cấp Premium</small></div></a>") +
+      '<a class="tier' + tier.cls + '" href="' + url("premium/") + '">' + icon(tier.ico) + "<div><b>" + tier.b + "</b><small>" + tier.small + "</small></div></a>" +
       "</div>" +
+      // Đơn thanh toán đang chờ Vũ xác nhận
+      (orders.length
+        ? '<div class="pending-orders panel">' + icon("clock") + "<div><b>" + orders.length + " đơn đang chờ xác nhận</b><span>" + orders.map((o) => escapeHtml(o.code + " · " + o.title + " · " + fmt.vnd(o.amount))).join("<br>") + "</span></div>" +
+          '<a class="btn btn--outline btn--sm" href="' + D.site.contact.zalo + '" target="_blank" rel="noopener">Nhắn Zalo</a></div>'
+        : "") +
       // KPIs
       '<div class="kpis">' +
       '<div class="panel kpi"><div class="kpi-label"><span style="background:var(--green-50);color:var(--green-500)">' + icon("book") + "</span>Bài học đã hoàn thành</div>" +
-      "<strong>" + doneLessons + "/" + totalLessons + "</strong><small>Đang học cấp độ " + (curLevel + 1) + ": " + lvl.title + "</small>" +
-      '<div class="progress-track"><i style="width:' + Math.round((doneLessons / totalLessons) * 100) + '%"></i></div></div>' +
-      '<div class="panel kpi"><div class="kpi-label"><span style="background:var(--blue-50);color:var(--blue-500)">' + icon("newspaper") + "</span>Bài viết đã đọc</div>" +
-      "<strong>35</strong><small>8 bài trong tuần này</small></div>" +
-      '<div class="panel kpi"><div class="kpi-label"><span style="background:var(--gold-50);color:var(--gold-500)">' + icon("clock") + "</span>Thời gian học hôm nay</div>" +
-      '<strong>2 giờ 15 phút</strong><small><span class="up">Tăng 25%</span> so với hôm qua</small></div>' +
+      "<strong>" + doneLessons + "/" + totalLessons + "</strong><small>Trong " + myCourses.length + " khóa học bạn xem được</small>" +
+      '<div class="progress-track"><i style="width:' + (totalLessons ? Math.round((doneLessons / totalLessons) * 100) : 0) + '%"></i></div></div>' +
+      '<div class="panel kpi"><div class="kpi-label"><span style="background:var(--gold-50);color:var(--gold-500)">' + icon("crown") + "</span>Quyền xem của bạn</div>" +
+      "<strong>" + access.roleName[role] + "</strong><small>" +
+      (role === "vip" ? "Toàn bộ khóa học và tin độc quyền" : role === "member" ? "Còn hạn tới " + fmt.date(user.memberUntil) : '<a href="' + url("premium/") + '">Xem các gói hội viên</a>') +
+      "</small></div>" +
+      '<div class="panel kpi"><div class="kpi-label"><span style="background:var(--blue-50);color:var(--blue-500)">' + icon("play") + "</span>Khóa học có phí đã sở hữu</div>" +
+      "<strong>" + D.courses.filter((c) => c.price && access.ownsCourse(c, user)).length + "/" + D.courses.filter((c) => c.price).length + "</strong>" +
+      '<small><a href="' + url("khoa-hoc/") + '?loc=paid">Xem khóa có phí</a></small></div>' +
       "</div>" +
       // Market + watchlist
       '<div class="dash-grid">' +
@@ -91,17 +108,17 @@
       "</section></div>" +
       // Continue + news
       '<div class="dash-grid dash-grid--even">' +
-      '<section class="panel panel-pad" aria-labelledby="ct-title"><div class="card-title"><h2 id="ct-title">Học tiếp</h2><a class="link-more" href="' + url("khoa-hoc/") + '">Lộ trình</a></div>' +
-      '<div class="continue"><div class="course-thumb">' + Art.thumb(["candles", "bars", "towers", "skyline-night", "pie"][curLevel], "dash" + curLevel) + "</div>" +
-      "<div><small>Cấp độ " + (curLevel + 1) + ": " + lvl.title + "</small><h3>" + escapeHtml(nextLesson.t) + "</h3>" +
-      '<div class="progress"><div class="progress-track"><i style="width:' + Math.round((progress[curLevel] / lvl.lessons.length) * 100) + '%"></i></div><span class="progress-label">' + progress[curLevel] + "/" + lvl.lessons.length + " bài</span></div></div>" +
-      '<a class="btn btn--green" href="' + url("khoa-hoc/") + '?cap=' + (curLevel + 1) + '">Tiếp tục học</a></div></section>' +
+      '<section class="panel panel-pad" aria-labelledby="ct-title"><div class="card-title"><h2 id="ct-title">Học tiếp</h2><a class="link-more" href="' + url("khoa-hoc/") + '?loc=mine">Khóa của tôi</a></div>' +
+      '<div class="continue"><div class="course-thumb">' + courseThumb(cur) + "</div>" +
+      "<div><small>" + escapeHtml(cur.title) + "</small><h3>Bài " + (nextIdx + 1) + ": " + escapeHtml(nextLesson.t) + "</h3>" +
+      '<div class="progress"><div class="progress-track"><i style="width:' + Math.round((curDone.length / cur.lessons.length) * 100) + '%"></i></div><span class="progress-label">' + curDone.length + "/" + cur.lessons.length + " bài</span></div></div>" +
+      '<a class="btn btn--green" href="' + url("khoa-hoc/") + "?khoa=" + cur.id + "&bai=" + (nextIdx + 1) + '">Tiếp tục học</a></div></section>' +
       '<section class="panel panel-pad" aria-labelledby="fn-title"><div class="card-title"><h2 id="fn-title">Tin nổi bật cho bạn</h2><a class="link-more" href="' + url("tin-tuc/") + '">Tất cả</a></div>' +
       '<ul class="mini-news">' +
       feed
         .map((n) => {
-          const tk = n.ticker && D.tickers.find((t) => t.code === n.ticker);
-          return '<li><a href="' + url("tin-tuc/") + '?ma=' + (n.ticker || "") + "#bai-" + n.id + '"><span class="thumb">' + Art.thumb(n.art, "n" + n.id, tk && tk.color) + "</span><span>" + (n.ticker ? '<span class="ticker-tag">' + n.ticker + "</span>" : "") + escapeHtml(n.title) + "<time>" + n.date + "</time></span></a></li>";
+          const tk = D.tickers.find((t) => n.tags.includes(t.code));
+          return '<li><a href="' + articleUrl(n) + '"><span class="thumb">' + Art.thumb(n.art, "n" + n.id, tk && tk.color) + "</span><span>" + (tk ? '<span class="ticker-tag">' + tk.code + "</span>" : "") + escapeHtml(n.title) + "<time>" + fmt.date(n.date) + "</time></span></a></li>";
         })
         .join("") +
       "</ul></section></div>" +

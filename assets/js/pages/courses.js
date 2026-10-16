@@ -1,197 +1,202 @@
-/* Trang khóa học */
+/* Trang khóa học: danh sách bên trái, video bài giảng bên phải */
 (function () {
-  const { icon, store, auth, courseCard, escapeHtml, toast, Art, url } = UI;
+  const { icon, fmt, norm, store, auth, access, escapeHtml, toast, url, courseThumb, priceTag, video, gate } = UI;
   const D = APP_DATA;
-  const PKEY = "dtcv-progress";
-  const PREVIEW = 5;
-
-  // progress[i] = số bài đã hoàn thành ở cấp độ i (bản demo: 2 bài ở cấp 1)
-  let progress = store.get(PKEY, null) || [2, 0, 0, 0, 0];
   const params = new URLSearchParams(location.search);
-  let level = Math.min(Math.max((parseInt(params.get("cap"), 10) || 1) - 1, 0), D.path.length - 1);
-  let expanded = false;
+  const listEl = document.querySelector("[data-course-list]");
+  const detailEl = document.querySelector("[data-course-detail]");
+  const searchEl = document.getElementById("course-search");
 
-  const navEl = document.querySelector("[data-path-nav]");
-  const levelEl = document.querySelector("[data-level]");
-  const allEl = document.querySelector("[data-all-courses]");
-  const allEmpty = document.querySelector("[data-all-empty]");
-  const mineEl = document.querySelector("[data-mine]");
-  const search = document.getElementById("course-search");
+  let filter = ["free", "paid", "mine"].includes(params.get("loc")) ? params.get("loc") : "all";
+  let course = D.courses.find((c) => c.id === params.get("khoa")) || D.courses[0];
+  let lessonIdx = Math.max(0, Math.min(course.lessons.length - 1, (+params.get("bai") || 1) - 1));
 
-  const pct = (i) => Math.round((progress[i] / D.path[i].lessons.length) * 100);
+  /* ----- Tiến độ: { courseId: [chỉ số bài đã học] } ----- */
+  function progress() {
+    const p = store.get("dtcv-progress", {});
+    return Array.isArray(p) || !p ? {} : p; // định dạng cũ là mảng: bỏ qua
+  }
+  const doneOf = (c) => progress()[c.id] || [];
+  function toggleDone(c, i) {
+    const p = progress();
+    const set = new Set(p[c.id] || []);
+    set.has(i) ? set.delete(i) : set.add(i);
+    p[c.id] = Array.from(set).sort((a, b) => a - b);
+    store.set("dtcv-progress", p);
+    return set.has(i);
+  }
 
-  function renderNav() {
-    navEl.innerHTML = D.path
-      .map(
-        (p, i) =>
-          '<li><button type="button" class="path-step" data-step="' + i + '"' + (i === level ? ' aria-current="step"' : "") + ">" +
-          '<span class="dot" style="background:' + p.color + '">' + String(i + 1).padStart(2, "0") + "</span>" +
-          "<span><b>" + p.title + "</b><small>" + p.lessons.length + " bài học" + (progress[i] ? ", xong " + pct(i) + "%" : "") + "</small>" +
-          '<span class="mini-bar" aria-hidden="true"><i style="width:' + pct(i) + '%"></i></span></span></button></li>'
-      )
+  const totalMin = (c) => c.lessons.reduce((a, l) => a + (l.m || 0), 0);
+  const hours = fmt.duration;
+
+  function syncUrl() {
+    const u = new URL(location.href);
+    u.searchParams.set("khoa", course.id);
+    lessonIdx ? u.searchParams.set("bai", lessonIdx + 1) : u.searchParams.delete("bai");
+    filter === "all" ? u.searchParams.delete("loc") : u.searchParams.set("loc", filter);
+    history.replaceState(null, "", u);
+  }
+
+  /* ----- Danh sách khóa học ----- */
+  function visibleCourses() {
+    const q = norm(searchEl.value);
+    const u = auth.user();
+    return D.courses.filter((c) => {
+      if (filter === "free" && c.price) return false;
+      if (filter === "paid" && !c.price) return false;
+      if (filter === "mine" && !(u && (u.vip || (u.courses || []).includes(c.id) || doneOf(c).length))) return false;
+      return !q || norm(c.title + " " + c.desc).includes(q);
+    });
+  }
+
+  function renderList() {
+    const items = visibleCourses();
+    const u = auth.user();
+    if (!items.length) {
+      let msg;
+      if (filter === "mine" && !u) msg = '<p>Đăng nhập để xem khóa học bạn đã mua và tiến độ học.</p><button class="btn btn--navy btn--sm" type="button" data-login>Đăng nhập</button>';
+      else if (filter === "mine") msg = '<p>Bạn chưa có khóa học nào. Bắt đầu với một khóa miễn phí nhé.</p><button class="btn btn--outline btn--sm" type="button" data-pick-filter="free">Xem khóa miễn phí</button>';
+      else msg = "<p>Không tìm thấy khóa học phù hợp. Thử từ khóa ngắn hơn.</p>";
+      listEl.innerHTML = '<li class="course-picker-empty">' + msg + "</li>";
+      return;
+    }
+    listEl.innerHTML = items
+      .map((c) => {
+        const owned = c.price && access.ownsCourse(c);
+        const done = doneOf(c).length;
+        return (
+          '<li><button type="button" class="course-pick" data-course="' + c.id + '"' + (c.id === course.id ? ' aria-current="true"' : "") + ">" +
+          '<span class="course-pick-thumb">' + courseThumb(c) + "</span>" +
+          '<span class="course-pick-body"><b>' + escapeHtml(c.title) + "</b>" +
+          "<small>" + c.lessons.length + " video · " + hours(totalMin(c)) + (done ? " · đã học " + done + "/" + c.lessons.length : "") + "</small>" +
+          (owned ? '<span class="price price--owned">' + icon("check") + "Đã sở hữu</span>" : priceTag(c)) +
+          "</span></button></li>"
+        );
+      })
       .join("");
   }
 
-  function renderLevel() {
-    const p = D.path[level];
-    const done = progress[level];
-    const total = p.lessons.length;
-    const finished = done >= total;
-    const shown = expanded ? p.lessons : p.lessons.slice(0, Math.max(PREVIEW, Math.min(done + 2, total)));
+  /* ----- Chi tiết khóa học + video ----- */
+  function renderDetail() {
+    const c = course;
+    const owned = access.ownsCourse(c);
+    const done = doneOf(c);
+    const lesson = c.lessons[lessonIdx];
+    const canWatch = access.canLesson(c, lesson);
+    const S = D.site;
 
-    levelEl.innerHTML =
-      '<div class="level-head"><div><h2>Cấp độ ' + (level + 1) + ": " + p.title + "</h2><p>" + p.desc + "</p></div>" +
-      (finished
-        ? '<span class="badge badge--green" style="font-size:.8rem;padding:6px 12px">Đã hoàn thành</span>'
-        : '<button class="btn btn--green" type="button" data-continue>' + (done ? "Tiếp tục học" : "Bắt đầu học") + icon("arrowRight") + "</button>") +
-      "</div>" +
-      '<div class="progress"><div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + done + '" aria-label="Tiến độ cấp độ ' + (level + 1) + '"><i style="width:' + pct(level) + '%"></i></div>' +
-      '<span class="progress-label">' + done + "/" + total + " bài, " + pct(level) + "%</span></div>" +
+    let buy = "";
+    if (c.price && !owned) {
+      buy =
+        '<div class="buy-box"><div><span class="buy-price">' + fmt.vnd(c.price) + "</span><small>Trọn bộ " + c.lessons.length + " video, học không giới hạn</small></div>" +
+        '<a class="btn btn--gold" href="' + url("thanh-toan/") + "?khoa=" + c.id + '">Mua ngay</a></div>' +
+        '<p class="buy-alt">' + icon("gift") + "<span>Hoặc học miễn phí khi mở tài khoản / chuyển ID về Đầu tư cùng Vũ với vốn từ " + S.minCapital + '. <a href="' + url("mo-tai-khoan/") + '">Xem cách làm</a></span></p>';
+    } else if (c.price) {
+      buy = '<p class="owned-note">' + icon("checkCircle") + "Bạn đã sở hữu khóa học này</p>";
+    } else if (!owned) {
+      buy = '<p class="owned-note owned-note--free">' + icon("info") + "Khóa miễn phí, cần đăng nhập để xem</p>";
+    }
+
+    let player;
+    if (canWatch) {
+      player = video(lesson.video, lesson.t);
+    } else if (!c.price) {
+      player = '<div class="player-lock">' + gate("user") + "</div>";
+    } else {
+      player = '<div class="player-lock">' + gate("course", { course: c }) + "</div>";
+    }
+
+    const pct = Math.round((done.length / c.lessons.length) * 100);
+    detailEl.innerHTML =
+      '<div class="panel panel-pad course-head">' +
+      '<div class="course-head-main"><h2>' + escapeHtml(c.title) + "</h2>" +
+      "<p>" + escapeHtml(c.desc) + "</p>" +
+      '<p class="course-facts"><span>' + icon("play") + c.lessons.length + " video bài giảng</span><span>" + icon("clock") + hours(totalMin(c)) + "</span>" +
+      (c.price ? "" : '<span class="price price--free">Miễn phí</span>') + "</p></div>" +
+      buy + "</div>" +
+      '<div class="panel player-card">' + player +
+      '<div class="player-bar"><div><small>Bài ' + (lessonIdx + 1) + "/" + c.lessons.length + "</small><h3>" + escapeHtml(lesson.t) + "</h3></div>" +
+      '<div class="player-actions">' +
+      (canWatch && auth.user() ? '<button class="btn btn--outline btn--sm" type="button" data-mark-done aria-pressed="' + done.includes(lessonIdx) + '">' + icon("check") + (done.includes(lessonIdx) ? "Đã học" : "Đánh dấu đã học") + "</button>" : "") +
+      '<button class="icon-btn" type="button" data-step="-1" aria-label="Bài trước"' + (lessonIdx === 0 ? " disabled" : "") + ">" + icon("chevronRight", 'style="transform:rotate(180deg)"') + "</button>" +
+      '<button class="icon-btn" type="button" data-step="1" aria-label="Bài tiếp theo"' + (lessonIdx === c.lessons.length - 1 ? " disabled" : "") + ">" + icon("chevronRight") + "</button>" +
+      "</div></div></div>" +
+      '<div class="panel panel-pad">' +
+      '<div class="card-title"><h3>Nội dung khóa học</h3>' + (done.length ? '<span class="progress-label">' + done.length + "/" + c.lessons.length + " bài · " + pct + "%</span>" : "") + "</div>" +
+      (done.length ? '<div class="progress-track" style="margin-top:10px"><i style="width:' + pct + '%"></i></div>' : "") +
       '<ol class="lesson-list">' +
-      shown
+      c.lessons
         .map((l, i) => {
-          const state = i < done ? "done" : i === done ? "current" : "locked";
-          const no = state === "done" ? icon("check") : i + 1;
-          const stateIcon = state === "done" ? icon("checkCircle") : state === "current" ? icon("play") : icon("lock");
-          const label = state === "done" ? "Đã học" : state === "current" ? "Bài tiếp theo" : "Mở khóa sau khi học bài trước";
-          const title =
-            state === "locked"
-              ? '<span class="lesson-title">' + escapeHtml(l.t) + "</span>"
-              : '<button type="button" class="lesson-title" data-lesson="' + i + '">' + escapeHtml(l.t) + "</button>";
+          const can = access.canLesson(c, l);
+          const isDone = done.includes(i);
+          const cls = i === lessonIdx ? "is-current" : isDone ? "is-done" : !can ? "is-locked" : "";
           return (
-            '<li class="lesson is-' + state + '"><span class="lesson-no">' + no + "</span>" + title +
-            '<span class="lesson-time">' + l.m + ' phút</span><span class="lesson-state" title="' + label + '"><span class="sr-only">' + label + "</span>" + stateIcon + "</span></li>"
+            '<li class="lesson ' + cls + '"><span class="lesson-no">' + (isDone ? icon("check") : i + 1) + "</span>" +
+            '<button type="button" class="lesson-title" data-lesson="' + i + '"' + (i === lessonIdx ? ' aria-current="true"' : "") + ">" + escapeHtml(l.t) +
+            (l.preview && c.price && !access.ownsCourse(c) ? ' <span class="badge badge--green">Học thử</span>' : "") + "</button>" +
+            '<span class="lesson-time">' + (l.m ? l.m + " phút" : "") + "</span>" +
+            '<span class="lesson-state">' + icon(can ? "play" : "lock") + '<span class="sr-only">' + (can ? "Xem được" : "Đang khóa") + "</span></span></li>"
           );
         })
         .join("") +
-      "</ol>" +
-      (shown.length < total || expanded
-        ? '<button class="lesson-more" type="button" data-expand aria-expanded="' + expanded + '">' + (expanded ? "Thu gọn danh sách" : "Xem thêm " + (total - shown.length) + " bài") + "</button>"
-        : "") +
-      '<div class="unlock-note">' + icon("shield") +
-      "<p>Hoàn thành khóa học và mở tài khoản, nạp từ 50 triệu đồng để <strong>nhận miễn phí toàn bộ khóa học và tin tức độc quyền</strong>.</p>" +
-      '<a class="btn btn--gold btn--sm" href="' + url("mo-tai-khoan/") + '#dang-ky">Mở tài khoản ngay</a></div>';
+      "</ol></div>";
   }
 
-  function save() {
-    store.set(PKEY, progress);
+  function render() {
+    renderList();
+    renderDetail();
+    syncUrl();
   }
 
-  function completeLesson(i) {
-    const p = D.path[level];
-    if (i === progress[level] && progress[level] < p.lessons.length) {
-      progress[level]++;
-      save();
-      toast("Đã hoàn thành bài: " + p.lessons[i].t);
-    } else {
-      toast("Đang mở lại bài: " + p.lessons[i].t);
-    }
-    renderNav();
-    renderLevel();
-  }
-
-  navEl.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-step]");
-    if (!b) return;
-    level = +b.dataset.step;
-    expanded = false;
-    renderNav();
-    renderLevel();
-    if (window.matchMedia("(max-width: 960px)").matches) levelEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  /* ----- Sự kiện ----- */
+  const filterTabs = UI.tabs(document.querySelector("[data-course-filter]"), (v) => {
+    filter = v;
+    renderList();
+    syncUrl();
   });
 
-  levelEl.addEventListener("click", (e) => {
-    if (e.target.closest("[data-continue]")) completeLesson(progress[level]);
-    const l = e.target.closest("[data-lesson]");
-    if (l) completeLesson(+l.dataset.lesson);
-    if (e.target.closest("[data-expand]")) {
-      expanded = !expanded;
-      renderLevel();
-    }
-  });
+  searchEl.addEventListener("input", renderList);
 
-  /* ----- All courses + search ----- */
-  function normalize(s) {
-    return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase();
-  }
-  function renderAll() {
-    const q = normalize(search.value.trim());
-    const list = D.courses.filter((c) => !q || normalize(c.title + " " + c.tag).includes(q));
-    allEl.innerHTML = list.map(courseCard).join("");
-    allEmpty.hidden = list.length > 0;
-  }
-
-  /* ----- Mine ----- */
-  function renderMine() {
-    const u = auth.user();
-    if (!u) {
-      mineEl.innerHTML =
-        '<div class="panel empty-state">' + icon("user") +
-        "<h3>Đăng nhập để xem khóa học của bạn</h3><p>Tiến độ học sẽ được lưu lại để bạn học tiếp trên mọi thiết bị.</p>" +
-        '<button class="btn btn--navy" type="button" data-login>Đăng nhập</button></div>';
+  document.addEventListener("click", (e) => {
+    const pick = e.target.closest("[data-course]");
+    if (pick) {
+      course = D.courses.find((c) => c.id === pick.dataset.course);
+      lessonIdx = 0;
+      render();
+      // Trên mobile danh sách nằm trên: đưa người dùng tới phần video
+      if (window.matchMedia("(max-width: 960px)").matches) detailEl.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
-    const started = D.path.map((p, i) => ({ p, i })).filter((x) => progress[x.i] > 0);
-    if (!started.length) {
-      mineEl.innerHTML =
-        '<div class="panel empty-state">' + icon("book") +
-        "<h3>Bạn chưa bắt đầu khóa học nào</h3><p>Chọn cấp độ 1 trong lộ trình để học bài đầu tiên, chỉ mất khoảng 12 phút.</p>" +
-        '<button class="btn btn--green" type="button" data-goto-path="0">Bắt đầu cấp độ 1</button></div>';
+    const les = e.target.closest("[data-lesson]");
+    if (les) {
+      lessonIdx = +les.dataset.lesson;
+      render();
+      detailEl.querySelector(".player-card").scrollIntoView({ behavior: "smooth", block: "nearest" });
       return;
     }
-    const arts = ["candles", "bars", "towers", "skyline-night", "pie"];
-    mineEl.innerHTML =
-      '<div class="mine-list">' +
-      started
-        .map(
-          (x) =>
-            '<article class="panel mine-item"><div class="course-thumb">' + Art.thumb(arts[x.i], "mine" + x.i) + "</div>" +
-            "<div><h3>Cấp độ " + (x.i + 1) + ": " + x.p.title + "</h3>" +
-            '<div class="progress"><div class="progress-track"><i style="width:' + pct(x.i) + '%"></i></div><span class="progress-label">' + progress[x.i] + "/" + x.p.lessons.length + " bài</span></div></div>" +
-            '<button class="btn btn--outline" type="button" data-goto-path="' + x.i + '">' + (pct(x.i) === 100 ? "Ôn tập" : "Học tiếp") + "</button></article>"
-        )
-        .join("") +
-      "</div>";
-  }
-
-  /* ----- Tabs ----- */
-  const panels = { path: "panel-path", all: "panel-all", mine: "panel-mine" };
-  const tabCtl = UI.tabs(document.querySelector("[data-course-tabs]"), (v) => {
-    Object.keys(panels).forEach((k) => (document.getElementById(panels[k]).hidden = k !== v));
-    if (v === "all") renderAll();
-    if (v === "mine") renderMine();
-    const url = new URL(location.href);
-    if (v === "path") url.searchParams.delete("tab");
-    else url.searchParams.set("tab", v);
-    history.replaceState(null, "", url);
+    const step = e.target.closest("[data-step]");
+    if (step && !step.disabled) {
+      lessonIdx = Math.max(0, Math.min(course.lessons.length - 1, lessonIdx + +step.dataset.step));
+      render();
+      return;
+    }
+    if (e.target.closest("[data-mark-done]")) {
+      const on = toggleDone(course, lessonIdx);
+      toast(on ? "Đã đánh dấu hoàn thành: " + course.lessons[lessonIdx].t : "Đã bỏ đánh dấu bài học.");
+      render();
+      return;
+    }
+    const pf = e.target.closest("[data-pick-filter]");
+    if (pf) filterTabs.select(pf.dataset.pickFilter);
   });
 
-  mineEl.addEventListener("click", (e) => {
-    const g = e.target.closest("[data-goto-path]");
-    if (!g) return;
-    level = +g.dataset.gotoPath;
-    renderNav();
-    renderLevel();
-    tabCtl.select("path");
-  });
+  document.addEventListener("auth:change", render);
 
-  search.addEventListener("input", () => {
-    if (document.getElementById("panel-all").hidden) tabCtl.select("all");
-    else renderAll();
-  });
-
-  document.addEventListener("auth:change", () => {
-    if (!document.getElementById("panel-mine").hidden) renderMine();
-  });
-
-  renderNav();
-  renderLevel();
-  const tab = params.get("tab");
-  if (tab === "all" || tab === "mine") {
-    // Chọn tab từ URL ngay khi tải: tắt hiệu ứng chuyển màu để không bị nháy
-    const list = document.querySelector("[data-course-tabs]");
+  if (filter !== "all") {
+    const list = document.querySelector("[data-course-filter]");
     list.classList.add("is-instant");
-    tabCtl.select(tab);
+    filterTabs.select(filter);
     requestAnimationFrame(() => requestAnimationFrame(() => list.classList.remove("is-instant")));
   }
+  render();
 })();

@@ -12,7 +12,7 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-PAGES = ["khoa-hoc", "tin-tuc", "mo-tai-khoan", "dashboard", "premium"]
+PAGES = ["khoa-hoc", "mo-tai-khoan", "tin-tuc", "bai-viet", "premium", "thanh-toan", "dashboard"]
 NOTE = "<!-- Tự sinh từ {slug}/index.html bởi scripts/sync-pages.py. Đừng sửa trực tiếp file này. -->\n"
 
 for slug in PAGES:

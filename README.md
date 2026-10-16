@@ -1,50 +1,75 @@
-# Đầu tư cùng Vũ — website tĩnh (HTML/CSS/JS)
+# Đầu tư cùng Vũ: website tĩnh (HTML/CSS/JS)
 
-Dựng lại 6 trang từ `design.jpeg` (ảnh cắt từng trang nằm ở `design-crops/`).
-
-| Trang | URL | File gốc (sửa ở đây) |
-|---|---|---|
-| Trang chủ | `/` hoặc `/index.html` | `index.html` |
-| Khóa học (lộ trình 5 cấp độ) | `/khoa-hoc/` hoặc `/khoa-hoc.html` | `khoa-hoc/index.html` |
-| Tin tức theo mã cổ phiếu | `/tin-tuc/` hoặc `/tin-tuc.html` | `tin-tuc/index.html` |
-| Mở tài khoản | `/mo-tai-khoan/` hoặc `/mo-tai-khoan.html` | `mo-tai-khoan/index.html` |
-| Dashboard (sau đăng nhập) | `/dashboard/` hoặc `/dashboard.html` | `dashboard/index.html` |
-| Premium | `/premium/` hoặc `/premium.html` | `premium/index.html` |
-
-## Hai URL cho mỗi trang
-
-Cả `/tin-tuc/` và `/tin-tuc.html` đều hiển thị trang đầy đủ, không redirect qua lại, không cần cấu hình server:
-
-- `tin-tuc/index.html` là **bản gốc**. Mọi chỉnh sửa làm ở đây.
-- `tin-tuc.html` ở thư mục gốc là **bản sinh ra** bằng `python3 scripts/sync-pages.py`, chỉ khác đường dẫn `../assets/` thành `assets/` và có thêm `<link rel="canonical">` trỏ về `/tin-tuc/` để công cụ tìm kiếm không coi là trùng nội dung.
-- **Sửa xong một trang thì chạy lại `python3 scripts/sync-pages.py`**, nếu không hai bản sẽ lệch nhau.
-- Link trong site luôn trỏ tới dạng `/slug/`. Link do JS sinh ra dùng `UI.url("khoa-hoc/?tab=all")`, tính từ vị trí `assets/js/ui.js`, nên đúng ở cả hai dạng URL và khi site đặt trong thư mục con.
-
-## Chạy thử
+Không cần build. Chạy thử:
 
 ```bash
 python3 -m http.server 5173
 # mở http://127.0.0.1:5173
 ```
 
-Không cần build. Mở trực tiếp file `index.html` (giao thức `file://`) vẫn chạy, link sẽ tự trỏ tới `.../index.html`.
+## Các trang
+
+| Trang | URL | File gốc (sửa ở đây) |
+|---|---|---|
+| Trang chủ | `/` | `index.html` |
+| Khóa học (video, miễn phí / có phí) | `/khoa-hoc/` | `khoa-hoc/index.html` |
+| Mở tài khoản / chuyển ID | `/mo-tai-khoan/` | `mo-tai-khoan/index.html` |
+| Tin tức (lọc theo mã, chủ đề, từ khóa) | `/tin-tuc/` | `tin-tuc/index.html` |
+| Đọc bài viết | `/bai-viet/?id=30` | `bai-viet/index.html` |
+| Gói hội viên | `/premium/` | `premium/index.html` |
+| Thanh toán QR | `/thanh-toan/?goi=3` hoặc `?khoa=<id>` | `thanh-toan/index.html` |
+| Tổng quan (sau đăng nhập) | `/dashboard/` | `dashboard/index.html` |
+
+Mỗi trang mở được ở cả `/slug/` và `/slug.html`. Các file `slug.html` ở thư mục gốc được sinh tự động: **sửa xong file trong thư mục thì chạy `python3 scripts/sync-pages.py`**.
+
+## Sửa nội dung: chỉ cần `assets/js/data.js`
+
+| Muốn sửa | Mục trong `data.js` |
+|---|---|
+| Số điện thoại, link Zalo, mạng xã hội | `site.contact` |
+| Câu ưu đãi 50 triệu, slogan | `site.offerTitle`, `site.offerText`, `site.slogan` |
+| Tài khoản nhận tiền / mã QR | `site.payment` (điền `bankId` + `accountNo` + `accountName` để QR tự có số tiền và nội dung, hoặc đặt ảnh QR vào `assets/img/` rồi ghi vào `qrImage`) |
+| Giá hội viên, các mức tháng | `site.membership` (mặc định 68.000đ, 1/3/6/12 tháng) |
+| Video hướng dẫn mở tài khoản, chuyển ID | `site.videos`, hoặc riêng từng công ty: `brokers[].openVideo`, `transferVideo` |
+| Link mở tài khoản, mã giới thiệu, mã môi giới của từng công ty | `brokers[].openUrl`, `refCode`, `transferUrl`, `transferCode` |
+| Khóa học: tên, mô tả, giá, bài học, link video | `courses` (`price: 0` là miễn phí, `preview: true` cho học thử) |
+| Bài viết, thẻ (mã CP + chủ đề), quyền xem | `news` |
+| Danh sách chủ đề tin và từ khóa tìm kiếm | `newsTags` |
+
+Video: dán link YouTube hoặc mã video. Để trống thì trang hiện khung "Video sẽ được cập nhật sớm".
+
+### Quyền xem (`access`)
+
+| Giá trị | Ai xem được |
+|---|---|
+| `public` | Tất cả |
+| `user` | Đã đăng nhập |
+| `member` | Hội viên còn hạn, hoặc tài khoản 50 triệu |
+| `vip` | Chỉ tài khoản mở / chuyển ID 50 triệu |
+
+Khóa có phí: người đã mua khóa đó hoặc tài khoản 50 triệu. Hội viên hết hạn tự về thành viên thường.
+
+Để xem thử giao diện theo từng vai trò: bấm **Đăng nhập** rồi chọn một nút trong mục "Xem thử theo vai trò".
 
 ## Cấu trúc
 
 ```
 assets/
-  css/core.css      tokens màu/chữ, header, footer, nút, tab, thẻ, modal, toast
-  css/pages.css     style riêng của từng trang
-  js/data.js        dữ liệu mẫu (chỉ số, mã CP, khóa học, tin tức, CTCK)
-  js/ui.js          header/footer dùng chung, đăng nhập giả lập, icon, biểu đồ SVG, ảnh minh họa SVG
+  css/core.css      tokens, header, footer, nút, thẻ, video, giá, nhãn quyền
+  css/pages.css     style riêng từng trang
+  js/data.js        CẤU HÌNH + DỮ LIỆU (sửa ở đây)
+  js/ui.js          header/footer, đăng nhập & phân quyền (giả lập), hộp mở khóa, video, biểu đồ SVG
   js/pages/*.js     logic từng trang
-  img/logo.svg
+  img/vu.jpg        ảnh đại diện (hero), vu-128.jpg (logo, favicon)
+scripts/sync-pages.py   sinh slug.html từ slug/index.html
 ```
 
-## Lưu ý khi đưa lên thật
+## Phải làm trước khi chạy thật
 
-- **Dữ liệu**: toàn bộ giá, chỉ số, tin tức trong `data.js` là dữ liệu minh họa. Thay bằng API thật (giá realtime, CMS tin tức).
-- **Đăng nhập**: chỉ giả lập bằng `localStorage` (`dtcv-user`). Nút "Dùng tài khoản demo" đăng nhập với quyền Premium. Cần backend xác thực thật.
-- **Khóa nội dung Premium**: hiện chỉ làm mờ ở phía trình duyệt. Nội dung trả phí phải được chặn từ server.
-- **Logo công ty chứng khoán**: đang hiển thị dạng chữ. Dùng logo thật cần có thỏa thuận liên kết.
-- **Form mở tài khoản**: đã validate phía client, chưa gửi đi đâu. Cần nối với CRM hoặc API của đối tác.
+Hiện là website tĩnh, chưa có máy chủ. Các phần sau mới chỉ chạy ở trình duyệt để demo:
+
+- **Đăng nhập & phân quyền** lưu trong trình duyệt (`localStorage`), người dùng có thể tự sửa. Nội dung trả phí (bài viết, link video) phải được máy chủ kiểm tra quyền trước khi trả về; hiện tại nội dung nằm sẵn trong `data.js` nên ai xem mã nguồn cũng đọc được.
+- **Thanh toán**: bấm "Tôi đã chuyển khoản" chỉ ghi đơn vào trình duyệt người mua. Cần một nơi lưu đơn (backend, Google Sheet, Firebase...) để Vũ xem, xác nhận và kích hoạt hội viên / khóa học cho đúng tài khoản, tính thời hạn từ ngày kích hoạt.
+- **Tài khoản 50 triệu**: việc kiểm tra mở tài khoản / chuyển ID, mức vốn và thu hồi quyền là thủ công; cần trang quản trị để bật / tắt quyền `vip` cho từng người.
+- **Dữ liệu thị trường** (chỉ số, giá cổ phiếu) là dữ liệu minh họa, cần API thật.
+- **Logo công ty chứng khoán** đang hiển thị dạng chữ; dùng logo thật cần thỏa thuận với từng công ty.
